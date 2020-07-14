@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"name": "Toyprojects",
+			"path": "."
+		},
+		{
+			"name": "Frontend",
+			"path": "..\\..\\Frontend"
+		},
+		{
+			"name": "blog",
+			"path": "..\\..\\..\\AppData\\Roaming\\SPB_Data\\niveus323.github.io\\blog"
+		},
+		{
+			"path": "..\\..\\취업\\BOJ"
+		}
+	],
+	"settings": {}
+}

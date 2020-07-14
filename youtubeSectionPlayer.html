@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Youtube 구간재생</title>
+    </head>
+
+    <body>
+        <section>
+            <h1>Youtube 동영상을 원하는 구간만!</h1>
+            <div>
+                <div id="player"></div>
+            </div>
+            
+        </section>
+        <aside>
+            <div id="update-player-button">
+                <button id="player-redraw-player" type="button" class="button-blue button"
+                 onclick="redrawPlayer();">선택한 옵션으로 플레이어 업데이트</button>                
+            </div>
+            <div id="player-functions">
+                <table id="player-functions-table" class="noborder noTopMargin" style="display: inline;">
+                    <tbody>
+                        <tr>
+                            <td class="noborder player-group-header">동영상 ID로 동영상 로드</td>
+                            <td class="player-group-options">
+                                <div class="player-option-row">
+                                    <input type="text" class="player-text-input player-tooltip-zindex" size="18" 
+                                     id="playerContent" value="M7lc1UVf-VE" alt="동영상 ID를 입력하세요">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </aside>
+    </body>
+    <style>
+        body{
+            height: auto;
+            overflow:hidden;
+            padding: 20px;
+            box-sizing: border-box;
+            margin: auto;
+        }
+        body>section>div{
+            position:relative;
+            max-width: 100%;
+            padding-bottom: 56.25%;
+            height:0;
+            margin-bottom: 5px;
+        }
+        #player{
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height: 100%;
+        }
+    </style>
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        var player;
+        var videoid = 'mFzHr8Xyo6E';
+        function onYouTubeIframeAPIReady(){
+            player = new YT.Player('player',{
+                // height:'100%',
+                // width: '56.25%',
+                width:'320',
+                height:'180',
+                videoId: videoid,         //로드할 동영상 ID
+                events:{
+                    'onReady': onPlayerReady
+                },
+                playerVars:{
+                    'disablekb' : 1,
+                    'controls' : 1
+                }
+            });
+        }
+
+        var videotime=0;
+        var timeupdater=null;
+        var starttime = 2361;
+        var endtime = 2456;
+
+        //동영상 준비되면 발생하는 함수
+        function onPlayerReady(event){  
+            function updateTime(){
+                var oldTime = videotime;
+                //console.log(videotime);
+                if(player&&player.getCurrentTime){
+                    videotime=player.getCurrentTime();//동영상의 현재 재생시간을 기준으로 타이머를 설정
+                }
+                if(videotime!= oldTime){
+                    onProgress(videotime);
+                }
+            }
+            timeupdater = setInterval(updateTime,100);
+            player.seekTo(starttime);
+            event.target.playVideo();
+        }
+
+        function onProgress(currentTime){
+            if(currentTime>endtime){
+                console.log("video will be loop");
+                player.seekTo(starttime);
+            }
+        }
+
+        function redrawPlayer(){
+            videoid = document.getElementById("playerContent").value;
+            // player.loadVideoById({
+            //     'videoId':videoid
+            // });
+
+            player.loadVideoById(videoid,
+                     0);
+        }
+    </script> 
+</html>
