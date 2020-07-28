@@ -13,19 +13,19 @@
         </section>
         <div class="player-options">
             <div id="update-player-button">
-                <button id="player-redraw-player" type="button" class="button-playerlist"
+                <button id="player-button-redraw" type="button" class="button-playerlist"
                     onclick="redrawPlayer();">선택한 옵션으로 플레이어 업데이트</button>
                 <button id="player-button-video" type="button" class="button-playerlist" onclick="addvideo();">동영상 추가</button>
             </div>
             <div id="player-functions">
-                <table id="player-functions-table" class="listbox">
+                <table id="player-functions-table0" class="listbox">
                     <tbody>
                         <tr>
                             <td class="noborder player-group-header">로드할 동영상 ID</td>
                             <td class="player-group-options">
                                 <div class="player-option-row">
                                     <input type="text" class="player-text-input player-tooltip-zindex" size="18" 
-                                        id="playerContent" value="mFzHr8Xyo6E" alt="동영상 ID를 입력하세요">
+                                        id="playerContent0" value="mFzHr8Xyo6E" alt="동영상 ID를 입력하세요">
                                 </div>
                             </td>
                             <td class="player-group-button">
@@ -37,11 +37,11 @@
                             <td class="player-group-options">
                                 <div class="player-option-row">
                                     <input type="text" class="player-text-input player-tooltip-zindex" size="18"
-                                    id="playerStartPoint" value="2361" alt="2361">
+                                    id="playerStartPoint0" value="2361" alt="2361">
                                 </div>
                             </td>
                             <td class="player-group-button" rowspan="2">
-                                <button id="player-button-point" type="button" class="button-blue button" onclick="setPoint();">설정</button>
+                                <button id="player-button-point" type="button" class="button" onclick="setPoint();">설정</button>
                             </td>
                         </tr>
                         <tr>
@@ -49,15 +49,15 @@
                                 <td class="player-group-options">
                                     <div class="player-option-row">
                                         <input type="text" class="player-text-input player-tooltip-zindex" size="18"
-                                        id="playerEndPoint" value="2456" alt="2456">
+                                        id="playerEndPoint0" value="2456" alt="2456">
                                 </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div id="player-functions-error" class="popup">
+                <!-- <div id="player-functions-error" class="popup">
 
-                </div>
+                </div> -->
 
             </div>
         </div>
@@ -75,12 +75,12 @@
         }
         .youtube{
             position:relative;
-            width:100%;
-            padding-bottom: 56.25%;
+            /* width:100%;
+            padding-bottom: 56.25%; */
             /* width:60%;
             padding-bottom: 33.75%; */
-            /* width:80%;
-            padding-bottom: 45%; */
+            width:80%;
+            padding-bottom: 45%;
             height:0;
             margin-bottom: 5px;
         }
@@ -89,19 +89,16 @@
             width: 100%;
             height: 100%;
         }
-        #update-player-button{  /*상위 player-options*/
+        /* #update-player-button{
             
-        }
-        .button-playerlist{
-            
-        }
+        } */
         .player-options{
             border: 2px solid black;
         }
         .listbox{
             border: 3px solid blue;
         }
-        #player-button-point{
+        .button{
             width: 100%;
             height: 100%;
         }
@@ -111,22 +108,59 @@
 TODO
 1. EndPoint가 StartPoint보다 앞에있으면 오류를 알릴것
 2. 사이드에 재생목록 추가하기
-3. 재생할 동영상 밑에 재생구간 저장
-(3-A. 사이드 재생목록을 팝업으로 띄우기)
+3. 재생할 동영상 밑에 재생구간
 4. footer에 github밑 정보 띄우기
 5. 화면 크기에 따라 텍스트 크기, 유튜브 화면 크기 변경(일정의 크기를 기준으로 퍼센티지 변경)
+6. 유튜브 화면에 챕터구간 표시
+7. 추가했지만 적용되지 않은 구간은 다른 색상으로 표시
+8. 재생목록 따로 스크롤
+9. 재생목록 루프 설정
 */
+        //재생시간 밑 동영상 목록을 위한 List구조
+        function List(){
+            this.elements ={};
+            this.index=0;
+            this.length=0;
+        }
+        List.prototype.add = function(element){
+            this.length++;
+            this.elements[this.index++]=element;
+        }
+        List.prototype.get=function(idx){
+            return this.elements[idx];
+        }
+        List.prototype.clear=function(){
+            elements = [];
+            index=0;
+            length=0;
+            console.log("clear! index="+index+"length="+length);
+        }
 
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         var player;
-        var videoid = 'mFzHr8Xyo6E';
+        var videolist = new List();
+        var starttimes = new List();
+        var endtimes = new List();
+        videolist.add('mFzHr8Xyo6E');   //기본 재생 동영상 ID
+        starttimes.add(2361);
+        endtimes.add(2456);
+
+        var videotime=0;
+        var timeupdater=null;
+        
+        
+        var tablenum =0;    //몇개의 재생목록을 받는 div가 생성되었는지 확인받는 변수
+        var currentidx=0;
+        var starttime =starttimes.get(0);
+        var endtime = endtimes.get(0);
+
         function onYouTubeIframeAPIReady(){
             player = new YT.Player('player',{
                 host:'https://www.youtube.com',
-                videoId: videoid,         //로드할 동영상 ID
+                videoId: videolist.get(0),         
                 events:{
                     'onReady': onPlayerReady
                 },
@@ -136,11 +170,6 @@ TODO
                 }
             });
         }
-
-        var videotime=0;
-        var timeupdater=null;
-        var starttime = 2361;
-        var endtime = 2456;
 
         //동영상 준비되면 발생하는 함수
         function onPlayerReady(event){  
@@ -156,38 +185,99 @@ TODO
             }
             timeupdater = setInterval(updateTime,100);
             player.seekTo(starttime);
+            console.log("starttime="+starttime+", endttime="+endtime);
             event.target.playVideo();
         }
 
         function onProgress(currentTime){
             if(currentTime>endtime){
-                console.log("video will be loop");
-                player.seekTo(starttime);
+                if(++currentidx>tablenum) {
+                    player.pauseVideo();//모든 재생 후 일시정지
+                    console.log("pause");
+                    currentidx =0;
+                }
+                else{          //다음 영상 재생          
+                    console.log("current idx = "+currentidx);
+                    //player.seekTo(starttime);
+                    player.loadVideoById(videolist.get(currentidx),0);
+                    setPoint(currentidx);
+                }   
             }
         }
 
-        function redrawPlayer(){
-            videoid = document.getElementById("playerContent").value;
-            setPoint();
-            player.loadVideoById(videoid,0);
-        }
-        function  setPoint(){
-            var prevstart=starttime;
-            var prevend = endtime;
-            starttime = document.getElementById("playerStartPoint").value;
-            endtime = document.getElementById("playerEndPoint").value;
-            if(endtime<=starttime){
-                document.getElementById("player-button-point").style.animation="button-error-anim 4s";
-                console.log("endpoint :"+endtime+" startpoint: "+starttime);
-                starttime = prevstart;
-                endtime=prevend;
-            }else{
-                player.seekTo(starttime);
+        function redrawPlayer(){//동영상 재생목록 업데이트
+            videolist.clear();
+            for(i=0;i<=tablenum;i++){
+                videolist.add(document.getElementById("playerContent"+i).value);
+                starttimes.add(document.getElementById("playerStartPoint"+i).value);
+                endtimes.add(document.getElementById("playerEndPoint"+i).value);
+                console.log(i+"-> "+"id="+videolist.get(i)+", start="+starttimes.get(i)+", end="+endtimes.get(i));
             }
+            console.log(videolist.length);
+            console.log(starttimes.length);
+            console.log(endtimes.length);
+            currentidx=0;
+            setPoint(0);
+            player.loadVideoById(videolist.get(0),0);  //일단은 새로고침으로 테스트
+        }
+        function  setPoint(index){
+            // var prevstart=starttime;
+            // var prevend = endtime;
+            // starttime = document.getElementById("playerStartPoint"+index).value;
+            // endtime = document.getElementById("playerEndPoint"+index).value;
+            // if(endtime<=starttime){
+            //     //document.getElementById("player-button-point").style.animation="button-error-anim 4s";
+            //     console.log("endpoint :"+endtime+" startpoint: "+starttime);
+            //     starttime = prevstart;
+            //     endtime=prevend;
+            // }else{
+            //     player.seekTo(starttime);
+            // }
+            starttime = starttimes.get(this.index);
+            endtime = endtimes.get(this.index);
+            console.log("starttime="+starttime+", endttime="+endtime);
+            player.seekTo(starttime);
         }
 
         function addvideo(){
-
+            var newTable = document.createElement("table");
+            newTable.setAttribute("id","player-functions-table"+(++tablenum));
+            console.log("재생목록 추가"+tablenum);
+            newTable.setAttribute("class","listbox");
+                var sectiontable="<tbody>";
+                    sectiontable+="<tr>";
+                        sectiontable+="<td class=\"noborder player-group-header\">로드할 동영상 ID</td>";
+                        sectiontable+="<td class=\"player-group-options\">"
+                            sectiontable+="<div class=\"player-option-row\">";
+                                sectiontable+="<input type=\"text\" class=\"player-text-input player-tooltip-zindex\" size=\"18\" id=\"playerContent"+tablenum+"\" value=\"mFzHr8Xyo6E\" alt=\"동영상 ID를 입력하세요\">"
+                            sectiontable+="</div>";
+                        sectiontable+="</td>";
+                        sectiontable+="<td class=\"player-group-button\"></td>";
+                    sectiontable+="</tr>";            
+                    sectiontable+="<tr>";
+                        sectiontable+="<td class=\"noborder player-group-header\">시작 지점</td>";
+                        sectiontable+="<td class=\"player-group-options\">";
+                            sectiontable+="<div class=\"player-option-row\">";
+                                sectiontable+="<input type=\"text\" class=\"player-text-input player-tooltip-zindex\" size=\"18\" id=\"playerStartPoint"+tablenum +"\" value=\"2361\" alt=\"2361\">"
+                            sectiontable+="</div>";
+                        sectiontable+="</td>"
+                        sectiontable+="<td class=\"player-group-button\" rowspan=\"2\">"
+                            sectiontable+="<button id=\"player-button-point"+tablenum+"\" type=\"button\" class=\"button\" onclick=\"setPoint();\">설정</button>"
+                        sectiontable+="</td>"
+                    sectiontable+="</tr>"
+                    sectiontable+="<tr>"
+                        sectiontable+="<td class=\"noborder player-group-header\">종료 지점</td>"
+                        sectiontable+="<td class=\"player-group-options\">"
+                            sectiontable+="<div class=\"player-option-row\">"
+                                sectiontable+="<input type=\"text\" class=\"player-text-input player-tooltip-zindex\" size=\"18\" id=\"playerEndPoint"+tablenum +"\" value=\"2456\" alt=\"2456\">";
+                            sectiontable+="</div>"
+                        sectiontable+="</td>"
+                    sectiontable+="</tr>"
+                sectiontable+="</tbody>"
+            // sectiontable+="</table>"
+            newTable.innerHTML = sectiontable;
+            var tableparent = document.getElementById("player-functions");
+            tableparent.appendChild(newTable);
         }
     </script> 
 </html>
