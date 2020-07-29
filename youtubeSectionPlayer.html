@@ -41,7 +41,7 @@
                                 </div>
                             </td>
                             <td class="player-group-button" rowspan="2">
-                                <button id="player-button-point" type="button" class="button" onclick="setPoint();">설정</button>
+                                <button id="player-button-point" type="button" class="button" onclick="setPoint(0);">설정</button>
                             </td>
                         </tr>
                         <tr>
@@ -130,10 +130,9 @@ TODO
             return this.elements[idx];
         }
         List.prototype.clear=function(){
-            elements = [];
-            index=0;
-            length=0;
-            console.log("clear! index="+index+"length="+length);
+            elements = {};
+            this.index=0;
+            this.length=0;
         }
 
         var tag = document.createElement('script');
@@ -144,20 +143,17 @@ TODO
         var videolist = new List();
         var starttimes = new List();
         var endtimes = new List();
-        videolist.add('mFzHr8Xyo6E');   //기본 재생 동영상 ID
-        starttimes.add(2361);
-        endtimes.add(2456);
 
         var videotime=0;
         var timeupdater=null;
         
-        
         var tablenum =0;    //몇개의 재생목록을 받는 div가 생성되었는지 확인받는 변수
         var currentidx=0;
-        var starttime =starttimes.get(0);
-        var endtime = endtimes.get(0);
+        var starttime;
+        var endtime;
 
         function onYouTubeIframeAPIReady(){
+            videolist.add("mFzHr8Xyo6E");   //기본 재생 동영상 ID
             player = new YT.Player('player',{
                 host:'https://www.youtube.com',
                 videoId: videolist.get(0),         
@@ -184,8 +180,12 @@ TODO
                 }
             }
             timeupdater = setInterval(updateTime,100);
+            starttimes.add(2361);
+            endtimes.add(2456);
+            starttime =starttimes.get(0);
+            endtime = endtimes.get(0);
             player.seekTo(starttime);
-            console.log("starttime="+starttime+", endttime="+endtime);
+            //console.log("starttime="+starttime+", endttime="+endtime);
             event.target.playVideo();
         }
 
@@ -199,28 +199,23 @@ TODO
                 else{          //다음 영상 재생          
                     console.log("current idx = "+currentidx);
                     //player.seekTo(starttime);
-                    player.loadVideoById(videolist.get(currentidx),0);
-                    setPoint(currentidx);
+                    // setPoint(currentidx);
+                    // if(player.videoId!=videolist.get(currentidx)){
+                    //     player.loadVideoById(videolist.get(currentidx),0);
+                    // }
+                    loadvideo();
                 }   
             }
         }
 
         function redrawPlayer(){//동영상 재생목록 업데이트
+            //updateLists();
             videolist.clear();
-            for(i=0;i<=tablenum;i++){
-                videolist.add(document.getElementById("playerContent"+i).value);
-                starttimes.add(document.getElementById("playerStartPoint"+i).value);
-                endtimes.add(document.getElementById("playerEndPoint"+i).value);
-                console.log(i+"-> "+"id="+videolist.get(i)+", start="+starttimes.get(i)+", end="+endtimes.get(i));
-            }
-            console.log(videolist.length);
-            console.log(starttimes.length);
-            console.log(endtimes.length);
+            for(i=0;i<=tablenum;i++)     videolist.add(document.getElementById("playerContent"+i).value);
             currentidx=0;
-            setPoint(0);
-            player.loadVideoById(videolist.get(0),0);  //일단은 새로고침으로 테스트
+            loadvideo();
         }
-        function  setPoint(index){
+        function  setPoint(num){
             // var prevstart=starttime;
             // var prevend = endtime;
             // starttime = document.getElementById("playerStartPoint"+index).value;
@@ -233,8 +228,13 @@ TODO
             // }else{
             //     player.seekTo(starttime);
             // }
-            starttime = starttimes.get(this.index);
-            endtime = endtimes.get(this.index);
+            // starttime = document.getElementById("playerStartPoint"+index).value;
+            // endtime = document.getElementById("playerEndPoint"+index).value;
+            console.log("current index is "+num);
+            currentidx=num;
+            updatePoints();
+            starttime = starttimes.get(num);
+            endtime = endtimes.get(num);
             console.log("starttime="+starttime+", endttime="+endtime);
             player.seekTo(starttime);
         }
@@ -262,7 +262,7 @@ TODO
                             sectiontable+="</div>";
                         sectiontable+="</td>"
                         sectiontable+="<td class=\"player-group-button\" rowspan=\"2\">"
-                            sectiontable+="<button id=\"player-button-point"+tablenum+"\" type=\"button\" class=\"button\" onclick=\"setPoint();\">설정</button>"
+                            sectiontable+="<button id=\"player-button-point"+tablenum+"\" type=\"button\" class=\"button\" onclick=\"setPoint("+tablenum+");\">설정</button>"
                         sectiontable+="</td>"
                     sectiontable+="</tr>"
                     sectiontable+="<tr>"
@@ -278,6 +278,40 @@ TODO
             newTable.innerHTML = sectiontable;
             var tableparent = document.getElementById("player-functions");
             tableparent.appendChild(newTable);
+        }
+
+        function updatePoints(){
+            starttimes.clear();
+            endtimes.clear();
+            console.log("tablenum is "+tablenum);
+            for(i=0;i<=tablenum;i++){
+                var sid="playerStartPoint"+i;
+                var eid="playerEndPoint"+i;
+                starttimes.add(document.getElementById(sid).value);
+                endtimes.add(document.getElementById(eid).value);
+                console.log(i+"-> "+" start="+starttimes.get(i)+", end="+endtimes.get(i));
+            }
+        }
+        function updateLists(){
+            videolist.clear();
+            starttimes.clear();
+            endtimes.clear();
+            for(i=0;i<=tablenum;i++){
+                videolist.add(document.getElementById("playerContent"+i).value);
+                starttimes.add(document.getElementById("playerStartPoint"+i).value);
+                endtimes.add(document.getElementById("playerEndPoint"+i).value);
+                console.log(i+"-> "+"id="+videolist.get(i)+", start="+starttimes.get(i)+", end="+endtimes.get(i));
+            }
+        }
+
+        function loadvideo(){
+            setPoint(currentidx);
+            var url = player.getVideoUrl();
+            var andpos=url.indexOf('&');
+            var id = url.substring(andpos+3,url.length);
+            if(id!=videolist.get(currentidx)){
+                player.loadVideoById(videolist.get(currentidx),0);  //일단은 새로고침으로 테스트
+            }
         }
     </script> 
 </html>
