@@ -29,7 +29,7 @@
                                 </div>
                             </td>
                             <td class="player-group-button">
-                                
+                                <button id="player-button-point" type="button" class="button" onclick="play(0);">재생</button>
                             </td>
                         </tr>
                         <tr>
@@ -115,6 +115,7 @@ TODO
 7. 추가했지만 적용되지 않은 구간은 다른 색상으로 표시
 8. 재생목록 따로 스크롤
 9. 재생목록 루프 설정
+10. URL에도 동영상 재생되도록
 */
         //재생시간 밑 동영상 목록을 위한 List구조
         function List(){
@@ -130,9 +131,18 @@ TODO
             return this.elements[idx];
         }
         List.prototype.clear=function(){
-            elements = {};
+            this.elements = {};
             this.index=0;
             this.length=0;
+        }
+        List.prototype.set=function(idx,element){
+            this.elements[idx]=element;
+            if(this.length<idx){
+                this.length=idx;
+            }
+            if(this.index<idx){
+                this.index = idx;
+            }
         }
 
         var tag = document.createElement('script');
@@ -168,7 +178,7 @@ TODO
         }
 
         //동영상 준비되면 발생하는 함수
-        function onPlayerReady(event){  
+        function onPlayerReady(event){ 
             function updateTime(){
                 var oldTime = videotime;
                 //console.log(videotime);
@@ -191,52 +201,43 @@ TODO
 
         function onProgress(currentTime){
             if(currentTime>endtime){
-                if(++currentidx>tablenum) {
-                    player.pauseVideo();//모든 재생 후 일시정지
-                    console.log("pause");
-                    currentidx =0;
+                if(currentidx>=tablenum) {
+                    //player.pauseVideo();//모든 재생 후 일시정지
+                    player.stopVideo();
+                    console.log("stop");
                 }
                 else{          //다음 영상 재생          
+                    play(++currentidx);
                     console.log("current idx = "+currentidx);
                     //player.seekTo(starttime);
                     // setPoint(currentidx);
                     // if(player.videoId!=videolist.get(currentidx)){
                     //     player.loadVideoById(videolist.get(currentidx),0);
                     // }
-                    loadvideo();
                 }   
             }
         }
 
         function redrawPlayer(){//동영상 재생목록 업데이트
-            //updateLists();
-            videolist.clear();
-            for(i=0;i<=tablenum;i++)     videolist.add(document.getElementById("playerContent"+i).value);
+            updateLists();
+            // videolist.clear();
+            // for(i=0;i<=tablenum;i++)     videolist.add(document.getElementById("playerContent"+i).value);
             currentidx=0;
-            loadvideo();
+            play(0);
         }
         function  setPoint(num){
-            // var prevstart=starttime;
-            // var prevend = endtime;
-            // starttime = document.getElementById("playerStartPoint"+index).value;
-            // endtime = document.getElementById("playerEndPoint"+index).value;
-            // if(endtime<=starttime){
-            //     //document.getElementById("player-button-point").style.animation="button-error-anim 4s";
-            //     console.log("endpoint :"+endtime+" startpoint: "+starttime);
-            //     starttime = prevstart;
-            //     endtime=prevend;
-            // }else{
-            //     player.seekTo(starttime);
-            // }
-            // starttime = document.getElementById("playerStartPoint"+index).value;
-            // endtime = document.getElementById("playerEndPoint"+index).value;
             console.log("current index is "+num);
-            currentidx=num;
-            updatePoints();
-            starttime = starttimes.get(num);
-            endtime = endtimes.get(num);
-            console.log("starttime="+starttime+", endttime="+endtime);
-            player.seekTo(starttime);
+            //currentidx=num;
+            //updatePoints();
+            //updateLists();
+            videolist.set(num,document.getElementById("playerContent"+num).value);
+            starttimes.set(num,document.getElementById("playerStartPoint"+num).value);
+            endtimes.set(num,document.getElementById("playerEndPoint"+num).value);
+            console.log(num+"-> "+"id="+videolist.get(num)+", start="+starttimes.get(num)+", end="+endtimes.get(num));
+            // starttime = starttimes.get(num);
+            // endtime = endtimes.get(num);
+            //console.log("starttime="+starttime+", endttime="+endtime);
+            //player.seekTo(starttime);
         }
 
         function addvideo(){
@@ -252,7 +253,9 @@ TODO
                                 sectiontable+="<input type=\"text\" class=\"player-text-input player-tooltip-zindex\" size=\"18\" id=\"playerContent"+tablenum+"\" value=\"mFzHr8Xyo6E\" alt=\"동영상 ID를 입력하세요\">"
                             sectiontable+="</div>";
                         sectiontable+="</td>";
-                        sectiontable+="<td class=\"player-group-button\"></td>";
+                        sectiontable+="<td class=\"player-group-button\">";
+                                sectiontable+="<button id=\"player-button-point\" type=\"button\" class=\"button\" onclick=\"play("+tablenum +");\">재생</button>";
+                            sectiontable+="</td>";
                     sectiontable+="</tr>";            
                     sectiontable+="<tr>";
                         sectiontable+="<td class=\"noborder player-group-header\">시작 지점</td>";
@@ -305,13 +308,32 @@ TODO
         }
 
         function loadvideo(){
-            setPoint(currentidx);
             var url = player.getVideoUrl();
-            var andpos=url.indexOf('&');
-            var id = url.substring(andpos+3,url.length);
-            if(id!=videolist.get(currentidx)){
-                player.loadVideoById(videolist.get(currentidx),0);  //일단은 새로고침으로 테스트
+            var andpos=url.indexOf('v=');
+            var id;
+            if(andpos != -1){
+                id = url.substring(andpos+2,url.length);
+            }else{
+                id = url;
             }
+            if(id!=videolist.get(currentidx)){
+                player.loadVideoById(
+                    {'videoId':videolist.get(currentidx),'suggestedQuality':'large'});
+                player.playVideoAt(starttimes.get(currentidx));
+            }
+        }
+
+        function  play(idx){
+            console.log("play index "+idx);
+            currentidx=idx;
+            setPoint(idx);
+            loadvideo();
+            // updateLists();
+            starttime = starttimes.get(idx);
+            endtime = endtimes.get(idx);
+            //console.log("starttime="+starttime+", endttime="+endtime);
+            player.seekTo(starttime);
+            
         }
     </script> 
 </html>
