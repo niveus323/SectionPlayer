@@ -162,6 +162,8 @@ TODO
         var starttime;
         var endtime;
 
+        var state;  //0 - 로드하고 재생 전, 1 - 재생 중, 2 - 완료
+
         function onYouTubeIframeAPIReady(){
             videolist.add("mFzHr8Xyo6E");   //기본 재생 동영상 ID
             player = new YT.Player('player',{
@@ -199,8 +201,21 @@ TODO
             event.target.playVideo();
         }
 
+        function onPlayerStateChange(event){
+            console.log('state is '+event.data);
+            
+        }
+
         function onProgress(currentTime){
-            if(currentTime>endtime){
+            if(state===0){
+                if(currentTime!=starttime){
+                    console.log("시작시간 재설정 중");
+                    player.seekTo(starttime);
+                }else{
+                    state=1;
+                }
+            }else if(currentTime>endtime){
+                state=2;
                 if(currentidx>=tablenum) {
                     //player.pauseVideo();//모든 재생 후 일시정지
                     player.stopVideo();
@@ -318,20 +333,19 @@ TODO
             }
             if(id!=videolist.get(currentidx)){
                 player.loadVideoById(
-                    {'videoId':videolist.get(currentidx),'suggestedQuality':'large'});
-                player.playVideoAt(starttimes.get(currentidx));
+                    {'videoId':videolist.get(currentidx), 'starttime':starttimes.get(currentidx)});
             }
         }
 
         function  play(idx){
-            console.log("play index "+idx);
+            state=0;
             currentidx=idx;
             setPoint(idx);
             loadvideo();
             // updateLists();
             starttime = starttimes.get(idx);
             endtime = endtimes.get(idx);
-            //console.log("starttime="+starttime+", endttime="+endtime);
+            console.log("starttime="+starttime+", endttime="+endtime);
             player.seekTo(starttime);
             
         }
