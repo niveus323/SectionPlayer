@@ -16,5 +16,9 @@
 			"path": "..\\..\\취업\\BOJ"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"vector": "cpp"
+		}
+	}
 }

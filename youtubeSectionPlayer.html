@@ -19,13 +19,13 @@
                     <label for="repeat">반복</label>
             </div>
             <div id="player-functions">
-                <table id="player-functions-table0" class="listbox">
+                <table id="player-functions-table0" class="listbox listbox-playing">
                     <tbody>
                         <tr>
                             <td class="noborder player-group-header">동영상 ID</td>
                             <td class="player-group-options">
                                 <div class="player-option-row">
-                                    <input type="text" class="player-text-input player-tooltip-zindex" size="18" 
+                                    <input type="text" class="player-text-input" size="18" 
                                         id="playerContent0" value="mFzHr8Xyo6E" alt="동영상 ID를 입력하세요">
                                 </div>
                             </td>
@@ -37,7 +37,7 @@
                             <td class="noborder player-group-header">시작 지점</td>
                             <td class="player-group-options">
                                 <div class="player-option-row">
-                                    <input type="text" class="player-text-input player-tooltip-zindex" size="18"
+                                    <input type="text" class="player-text-input" size="18"
                                     id="playerStartPoint0" value="2361" alt="2361">
                                 </div>
                             </td>
@@ -49,7 +49,7 @@
                             <td class="noborder player-group-header">종료 지점</td>
                                 <td class="player-group-options">
                                     <div class="player-option-row">
-                                        <input type="text" class="player-text-input player-tooltip-zindex" size="18"
+                                        <input type="text" class="player-text-input" size="18"
                                         id="playerEndPoint0" value="2456" alt="2456">
                                 </div>
                             </td>
@@ -72,7 +72,8 @@
             padding: 20px;
             box-sizing: border-box;
             margin: auto;
-        }
+            /* background-color: #1f1f1f;     */
+        } 
         .youtube{
             position:relative;
             /* width:100%;
@@ -92,19 +93,43 @@
         }
         .player-options{
             margin-left:3px;
-            border: 2px solid black;
+            /* border: 2px solid black; */
+            /* background-color: gray; */
+            /* box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22); */
+            box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+            border-radius: 3px;
             padding:3px;
             height:58%;
             float:left;
             overflow: auto;
         }
         .listbox{
-            border: 3px solid blue;
-            margin-top: 2px;
+            margin-top: 5px;
+            border-radius: 3px;
+            
         }
         .button{
             width: 100%;
             height: 100%;
+        }
+        /* .player-functions{
+            margin-top:30px;
+            margin-right: 10px;
+            display: inline-block;
+            width:30%;
+            color:#fff;
+            border-radius: 3px;
+        } */
+        .listbox-not-applied{
+            background-color:#EC678A;
+        }
+        .listbox-playing{
+            background-color:#5BCCF6;
+            
+            box-shadow: inset 2px 2px 2px #9d9d9d;
+        }
+        .listbox-applied{
+            background-color: #A0DA9D;
         }
     </style>
     <script>
@@ -113,9 +138,10 @@ TODO
 1. EndPoint가 StartPoint보다 앞에있으면 오류를 알릴것
 2. footer에 github밑 정보 띄우기
 3. 화면 크기에 따라 텍스트 크기, 유튜브 화면 크기 변경(일정의 크기를 기준으로 퍼센티지 변경)
-4. 추가했지만 적용되지 않은 구간은 다른 색상으로 표시 (적용시 파란색, 미적용시 빨간색)
-5. 모바일 환경에서도 자동재생이 되도록 plyr 적용
+4. 모바일 환경에서도 자동재생이 되도록 mute=1로 실행후 재생시 mute 끄기
+5. 서버 베포 (heroku, cafe24 등등)
 */
+
         //재생시간 밑 동영상 목록을 위한 List구조
         function List(){
             this.elements ={};
@@ -207,22 +233,16 @@ TODO
                     state=1;
                 }
             }else if(currentTime>endtime){
-                state=2;
+                state=2;  
                 if(currentidx>=tablenum) {
-                    // player.stopVideo();
-                    // console.log("stop");
                     let repeatbox = document.getElementById("player-button-repeat");
-                    if(repeatbox.checked){
-                        currentidx=0;
-                        play(currentidx);
-                    }else{
-                        player.stopVideo();
-                    }
+                    if(repeatbox.checked)    play(0);
+                    else   player.stopVideo();
                 }
-                else{          //다음 영상 재생          
-                    play(++currentidx);
+                else{          //다음 영상 재생
+                    play(currentidx+1);
                     console.log("current idx = "+currentidx);
-                }   
+                }
             }
         }
 
@@ -246,6 +266,11 @@ TODO
             videolist.set(num,getIdFromUrl(document.getElementById("playerContent"+num).value));
             starttimes.set(num,caltime(document.getElementById("playerStartPoint"+num).value));
             endtimes.set(num,caltime(document.getElementById("playerEndPoint"+num).value));
+            
+            let table = document.getElementById("player-functions-table"+num);
+            table.classList.remove("listbox-not-applied");
+            table.classList.add("listbox-applied");
+
             console.log(num+"-> "+"id="+videolist.get(num)+", start="+starttimes.get(num)+", end="+endtimes.get(num));
         }
 
@@ -279,13 +304,13 @@ TODO
             var newTable = document.createElement("table");
             newTable.setAttribute("id","player-functions-table"+(++tablenum));
             console.log("재생목록 추가"+tablenum);
-            newTable.setAttribute("class","listbox");
+            newTable.setAttribute("class","listbox listbox-not-applied");
                 var sectiontable="<tbody>";
                     sectiontable+="<tr>";
                         sectiontable+="<td class=\"noborder player-group-header\">동영상 ID</td>";
                         sectiontable+="<td class=\"player-group-options\">"
                             sectiontable+="<div class=\"player-option-row\">";
-                                sectiontable+="<input type=\"text\" class=\"player-text-input player-tooltip-zindex\" size=\"18\" id=\"playerContent"+tablenum+"\" value=\"mFzHr8Xyo6E\" alt=\"동영상 ID를 입력하세요\">"
+                                sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerContent"+tablenum+"\" value=\"mFzHr8Xyo6E\" alt=\"동영상 ID를 입력하세요\">"
                             sectiontable+="</div>";
                         sectiontable+="</td>";
                         sectiontable+="<td class=\"player-group-button\">";
@@ -296,7 +321,7 @@ TODO
                         sectiontable+="<td class=\"noborder player-group-header\">시작 지점</td>";
                         sectiontable+="<td class=\"player-group-options\">";
                             sectiontable+="<div class=\"player-option-row\">";
-                                sectiontable+="<input type=\"text\" class=\"player-text-input player-tooltip-zindex\" size=\"18\" id=\"playerStartPoint"+tablenum +"\" value=\"2361\" alt=\"2361\">"
+                                sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerStartPoint"+tablenum +"\" value=\"2361\" alt=\"2361\">"
                             sectiontable+="</div>";
                         sectiontable+="</td>"
                         sectiontable+="<td class=\"player-group-button\">"
@@ -307,7 +332,7 @@ TODO
                         sectiontable+="<td class=\"noborder player-group-header\">종료 지점</td>"
                         sectiontable+="<td class=\"player-group-options\">"
                             sectiontable+="<div class=\"player-option-row\">"
-                                sectiontable+="<input type=\"text\" class=\"player-text-input player-tooltip-zindex\" size=\"18\" id=\"playerEndPoint"+tablenum +"\" value=\"2456\" alt=\"2456\">";
+                                sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerEndPoint"+tablenum +"\" value=\"2456\" alt=\"2456\">";
                             sectiontable+="</div>"
                         sectiontable+="</td>"
                         sectiontable+="<td class=\"player-group-button\">"
@@ -385,11 +410,20 @@ TODO
 
         function  play(idx){
             state=0;
+            let table = document.getElementById("player-functions-table"+currentidx);
+            table.classList.remove("listbox-playing");
+            table.classList.add("listbox-applied"); 
+
             currentidx=idx;
             setPoint(idx);
             loadvideo();
             starttime = starttimes.get(idx);
             endtime = endtimes.get(idx);
+
+            table = document.getElementById("player-functions-table"+idx);
+            table.classList.remove("listbox-applied");
+            table.classList.add("listbox-playing");
+
             console.log("starttime="+starttime+", endttime="+endtime);
             player.seekTo(starttime);
         }
