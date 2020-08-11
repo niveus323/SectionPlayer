@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Youtube 구간재생</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
     </head>
 
     <body>
@@ -62,17 +63,32 @@
             </div>
         </div>
         <footer>
-
+            <div class="level">
+                <div class="level-start">
+                    <span class="copyright">© 2020 Made by HaengLee.</span>
+                </div>
+                <div class="level-end">
+                    <p class="control">
+                        <a class="button-git" target="_blank" rel="noopener" title="GitHub" href="https://github.com/niveus323/Toyprojects">
+                            <i class="fab fa-github-square"></i>
+                        </a>
+                        <a class="button-blog" target="_blank" rel="noopener" title="Blog"
+                        href="https://niveus323.github.io">
+                        <i class="fab fa-blogger"></i>
+                        </a>
+                    </p>
+                </div>
+            </div>
         </footer>
     </body>
     <style>
         body{
-            height: auto;
+            height: 100%;
             overflow:auto;
             padding: 20px;
             box-sizing: border-box;
             margin: auto;
-            /* background-color: #1f1f1f;     */
+            background-color: #f7f7f7;    
         } 
         .youtube{
             position:relative;
@@ -130,6 +146,40 @@
         }
         .listbox-applied{
             background-color: #A0DA9D;
+        }
+        footer{
+            background-color: #fff;
+            padding: 3rem 1.5rem 6rem;
+            clear:both;
+            position: fixed;
+            bottom:0;
+            height: 50px;
+            left:-20px;
+            width: calc( 100% + 20px );
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        .control{
+            margin:0;
+        }
+        .level-start{
+            float:left;
+        }
+        .copyright{
+            font-size: 20px;
+            margin-left:20px;
+        }
+        .level-end{
+            width: auto;
+            position: fixed;
+            right:30px;
+        }
+        .button-git{
+            margin-right:20px;
+        }
+
+        .fab{
+            font-size:30px;
         }
     </style>
     <script>
