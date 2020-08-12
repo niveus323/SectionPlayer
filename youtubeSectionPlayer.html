@@ -4,14 +4,14 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
     </head>
 
-    <body>
+    <body onresize="reSize()" onload="reSize()">
         <h1>Youtube 동영상을 원하는 구간만!</h1>
         <section>
             <div class="youtube">
                 <div id="player"></div>
             </div>
         </section>
-        <div class="player-options">
+        <div class="player-options" id="options">
             <div id="update-player-button">
                 <button id="player-button-redraw" type="button" class="button-playerlist"
                     onclick="redrawPlayer();">플레이어 업데이트</button>
@@ -99,7 +99,6 @@
             /* width:80%;
             padding-bottom: 45%; */
             height:0;
-            margin-bottom: 5px;
             float:left;
         }
         #player{
@@ -115,7 +114,7 @@
             box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
             border-radius: 3px;
             padding:3px;
-            height:58%;
+            /* height:58%; */
             float:left;
             overflow: auto;
         }
@@ -182,15 +181,24 @@
             font-size:30px;
         }
     </style>
+    
     <script>
 /*
-TODO
-1. EndPoint가 StartPoint보다 앞에있으면 오류를 알릴것
-2. footer에 github밑 정보 띄우기
-3. 화면 크기에 따라 텍스트 크기, 유튜브 화면 크기 변경(일정의 크기를 기준으로 퍼센티지 변경)
-4. 모바일 환경에서도 자동재생이 되도록 mute=1로 실행후 재생시 mute 끄기
-5. 서버 베포 (heroku, cafe24 등등)
+    TODO
+    1. EndPoint가 StartPoint보다 앞에있으면 오류를 알릴것
+    2. footer에 github밑 정보 띄우기
+    3. 화면 크기에 따라 텍스트 크기, 유튜브 화면 크기 변경(일정의 크기를 기준으로 퍼센티지 변경)
+    4. 모바일 환경에서도 자동재생이 되도록 mute=1로 실행후 재생시 mute 끄기
+    5. 서버 베포 (heroku, cafe24 등등)
 */
+
+        function reSize(){
+            let height = document.getElementsByClassName('youtube')[0].offsetHeight;
+            let elem_option = document.getElementById('options');
+            let padding_option = window.getComputedStyle(elem_option).padding;
+            height -= parseFloat(padding_option)*2;
+            elem_option.style.height = height;
+        }
 
         //재생시간 밑 동영상 목록을 위한 List구조
         function List(){
