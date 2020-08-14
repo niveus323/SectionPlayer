@@ -5,61 +5,64 @@
     </head>
 
     <body onresize="reSize()" onload="reSize()">
-        <h1>Youtube 동영상을 원하는 구간만!</h1>
-        <section>
-            <div class="youtube">
-                <div id="player"></div>
-            </div>
-        </section>
-        <div class="player-options" id="options">
-            <div id="update-player-button">
-                <button id="player-button-redraw" type="button" class="button-playerlist"
-                    onclick="redrawPlayer();">플레이어 업데이트</button>
-                <button id="player-button-video" type="button" class="button-playerlist" onclick="addTable();">동영상 추가</button>
-                <input type="checkbox" id="player-button-repeat" name="repeat">
-                    <label for="repeat">반복</label>
-            </div>
-            <div id="player-functions">
-                <table id="player-functions-table0" class="listbox listbox-playing">
-                    <tbody>
-                        <tr>
-                            <td class="noborder player-group-header">동영상 ID</td>
-                            <td class="player-group-options">
-                                <div class="player-option-row">
-                                    <input type="text" class="player-text-input" size="18" 
-                                        id="playerContent0" value="mFzHr8Xyo6E" alt="동영상 ID를 입력하세요">
-                                </div>
-                            </td>
-                            <td class="player-group-button">
-                                <button id="player-button-play" type="button" class="button" onclick="play(0);">재생</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="noborder player-group-header">시작 지점</td>
-                            <td class="player-group-options">
-                                <div class="player-option-row">
-                                    <input type="text" class="player-text-input" size="18"
-                                    id="playerStartPoint0" value="2361" alt="2361">
-                                </div>
-                            </td>
-                            <td class="player-group-button">
-                                <button id="player-button-set" type="button" class="button" onclick="setPoint(0);">설정</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="noborder player-group-header">종료 지점</td>
+        <div class="main">
+            <h1>Youtube 동영상을 원하는 구간만!</h1>
+            <section>
+                <div class="youtube">
+                    <div id="player"></div>
+                </div>
+            </section>
+            <div class="player-options" id="options">
+                <div id="update-player-button">
+                    <button id="player-button-redraw" type="button" class="button-playerlist"
+                        onclick="redrawPlayer();">플레이어 업데이트</button>
+                    <button id="player-button-video" type="button" class="button-playerlist" onclick="addTable();">동영상 추가</button>
+                    <input type="checkbox" id="player-button-repeat" name="repeat">
+                        <label for="repeat">반복</label>
+                </div>
+                <div id="player-functions">
+                    <table id="player-functions-table0" class="listbox listbox-playing">
+                        <tbody>
+                            <tr>
+                                <td class="noborder player-group-header">동영상 ID</td>
+                                <td class="player-group-options">
+                                    <div class="player-option-row">
+                                        <input type="text" class="player-text-input" size="18" 
+                                            id="playerContent0" value="IOFetSmuOPs" alt="동영상 ID를 입력하세요">
+                                            <!-- mFzHr8Xyo6E -->
+                                    </div>
+                                </td>
+                                <td class="player-group-button">
+                                    <button id="player-button-play" type="button" class="button" onclick="play(0);">재생</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="noborder player-group-header">시작 지점</td>
                                 <td class="player-group-options">
                                     <div class="player-option-row">
                                         <input type="text" class="player-text-input" size="18"
-                                        id="playerEndPoint0" value="2456" alt="2456">
-                                </div>
-                            </td>
-                            <td class="player-group-button">
-                                <button id="player-button-delete" type="button" class="button" onclick="deletePoint(0);">삭제</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                        id="playerStartPoint0" value="2361" alt="2361">
+                                    </div>
+                                </td>
+                                <td class="player-group-button">
+                                    <button id="player-button-set" type="button" class="button" onclick="setPoint(0);">설정</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="noborder player-group-header">종료 지점</td>
+                                    <td class="player-group-options">
+                                        <div class="player-option-row">
+                                            <input type="text" class="player-text-input" size="18"
+                                            id="playerEndPoint0" value="2456" alt="2456">
+                                    </div>
+                                </td>
+                                <td class="player-group-button">
+                                    <button id="player-button-delete" type="button" class="button" onclick="deletePoint(0);">삭제</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <footer>
@@ -85,20 +88,28 @@
         body{
             height: 100%;
             overflow:auto;
-            padding: 20px;
+            /* padding: 20px; */
             box-sizing: border-box;
             margin: auto;
             background-color: #f7f7f7;    
+        }
+        .main{
+            min-height: 100%;
+            padding:10px 0 0 20px;
         } 
-        .youtube{
+        .youtube{   /*9:16*/
             position:relative;
             /* width:100%;
             padding-bottom: 56.25%; */
-            width:73%;
-            padding-bottom: 41%;
+            /* width:73%;
+            padding-bottom: 41%; */
             /* width:80%;
             padding-bottom: 45%; */
-            height:0;
+            /* height:0; */
+            /* height:70%;
+            padding-right:70%; */
+            height: calc( 90% - 20px );
+            padding-right:70%;
             float:left;
         }
         #player{
@@ -148,15 +159,22 @@
         }
         footer{
             background-color: #fff;
-            padding: 3rem 1.5rem 6rem;
+            /* padding: 3rem 1.5rem 6rem; */
+            /* padding:1.2rem 1rem 2.5rem;
             clear:both;
             position: fixed;
             bottom:0;
-            height: 50px;
-            left:-20px;
-            width: calc( 100% + 20px );
+            height: 30px;
+            left:-20px; */
+            /* width: calc( 100% + 20px ); */
+            width:100%;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+            position:relative;
+            margin-top: 10px;
+            padding:40px 0;
+            height:100px;
+            text-align: left;
         }
         .control{
             margin:0;
@@ -170,7 +188,8 @@
         }
         .level-end{
             width: auto;
-            position: fixed;
+            /* position: fixed; */
+            position: absolute;
             right:30px;
         }
         .button-git{
@@ -186,13 +205,15 @@
 /*
     TODO
     1. EndPoint가 StartPoint보다 앞에있으면 오류를 알릴것
-    2. footer에 github밑 정보 띄우기
-    3. 화면 크기에 따라 텍스트 크기, 유튜브 화면 크기 변경(일정의 크기를 기준으로 퍼센티지 변경)
-    4. 모바일 환경에서도 자동재생이 되도록 mute=1로 실행후 재생시 mute 끄기
-    5. 서버 베포 (heroku, cafe24 등등)
+    2. 화면 크기에 따라 텍스트 크기, 유튜브 화면 크기 변경(media쿼리 이용해서 분기되는 css파일 준비 min-width => 해상도 최소 조건.)
+    3. 모바일 환경에서도 자동재생이 되도록 mute=1로 실행후 재생시 mute 끄기
+    4. 서버 베포 (heroku, cafe24 등등)
+    5. 재생목록 추가시 이전 재생목록의 동영상 id복사하여 value 설정
 */
 
         function reSize(){
+            console.log(window.screen.height+ ", " + window.screen.width);
+
             let height = document.getElementsByClassName('youtube')[0].offsetHeight;
             let elem_option = document.getElementById('options');
             let padding_option = window.getComputedStyle(elem_option).padding;
@@ -248,7 +269,7 @@
         var state;  //0 - 로드하고 재생 전, 1 - 재생 중, 2 - 완료
 
         function onYouTubeIframeAPIReady(){
-            videolist.add("mFzHr8Xyo6E");   //기본 재생 동영상 ID
+            videolist.add("IOFetSmuOPs");   //기본 재생 동영상 ID mFzHr8Xyo6E
             player = new YT.Player('player',{
                 host:'https://www.youtube.com',
                 videoId: videolist.get(0),         
