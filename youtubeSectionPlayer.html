@@ -2,8 +2,8 @@
     <head>
         <title>Youtube 구간재생</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+        <link rel="stylesheet" type="text/css" href="sectionDesign.css">
     </head>
-
     <body onresize="reSize()" onload="reSize()">
         <div class="main">
             <h1>Youtube 동영상을 원하는 구간만!</h1>
@@ -15,10 +15,10 @@
             <div class="player-options" id="options">
                 <div id="update-player-button">
                     <button id="player-button-redraw" type="button" class="button-playerlist"
-                        onclick="redrawPlayer();">플레이어 업데이트</button>
-                    <button id="player-button-video" type="button" class="button-playerlist" onclick="addTable();">동영상 추가</button>
+                        onclick="redrawPlayer();">재생목록 재생하기</button>
+                    <button id="player-button-video" type="button" class="button-playerlist" onclick="addTable();">재생목록 추가</button>
                     <input type="checkbox" id="player-button-repeat" name="repeat">
-                        <label for="repeat">반복</label>
+                        <label class="button-playerlist" for="repeat">반복</label>
                 </div>
                 <div id="player-functions">
                     <table id="player-functions-table0" class="listbox listbox-playing">
@@ -28,12 +28,12 @@
                                 <td class="player-group-options">
                                     <div class="player-option-row">
                                         <input type="text" class="player-text-input" size="18" 
-                                            id="playerContent0" value="IOFetSmuOPs" alt="동영상 ID를 입력하세요">
-                                            <!-- mFzHr8Xyo6E -->
+                                            id="playerContent0" value="mFzHr8Xyo6E" alt="동영상 ID를 입력하세요">
+                                            <!-- mFzHr8Xyo6E IOFetSmuOPs-->
                                     </div>
                                 </td>
                                 <td class="player-group-button">
-                                    <button id="player-button-play" type="button" class="button" onclick="play(0);">재생</button>
+                                    <button id="player-button-play" type="button" class="button" onclick="play(0);"><i class="fas fa-play"></i></button>
                                 </td>
                             </tr>
                             <tr>
@@ -45,7 +45,7 @@
                                     </div>
                                 </td>
                                 <td class="player-group-button">
-                                    <button id="player-button-set" type="button" class="button" onclick="setPoint(0);">설정</button>
+                                    <button id="player-button-set" type="button" class="button" onclick="setPoint(0);"><i class="fas fa-check"></i></button>
                                 </td>
                             </tr>
                             <tr>
@@ -57,7 +57,7 @@
                                     </div>
                                 </td>
                                 <td class="player-group-button">
-                                    <button id="player-button-delete" type="button" class="button" onclick="deletePoint(0);">삭제</button>
+                                    <button id="player-button-delete" type="button" class="button" onclick="deletePoint(0);"><i class="far fa-trash-alt"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -84,442 +84,5 @@
             </div>
         </footer>
     </body>
-    <style>
-        @media (min-width: 1145px){
-            .main{
-            min-height: 88%;
-            padding:10px 0 0 20px;
-            } 
-            .youtube{   /*9:16*/
-                position:relative;
-                /* width:100%; */
-                /* padding-bottom: 56.25%; */
-                width:73%;
-                padding-bottom: 41%;
-                /* width:80%;
-                padding-bottom: 45%; */
-                height:0;
-                float:left;
-            }
-        }
-        @media (max-width: 1144px){
-            .main{
-            min-height: 88%;
-            padding:10px 0 0 20px;
-            } 
-            .youtube{   
-                position:relative;
-                width:100%;
-                padding-bottom: 56.25%;
-                /* width:80%;
-                padding-bottom: 45%; */
-                height:0;
-                float:left;
-            }
-        }
-        body{
-            height: 100%;
-            overflow:auto;
-            /* padding: 20px; */
-            box-sizing: border-box;
-            margin: auto;
-            background-color: #f7f7f7;    
-        }
-        
-        #player{
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-        .player-options{
-            margin-left:3px;
-            /* border: 2px solid black; */
-            /* background-color: gray; */
-            /* box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22); */
-            box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
-            border-radius: 3px;
-            padding:3px;
-            /* height:58%; */
-            float:left;
-            overflow: auto;
-        }
-        .listbox{
-            margin-top: 5px;
-            border-radius: 3px;
-            
-        }
-        .button{
-            width: 100%;
-            height: 100%;
-        }
-        /* .player-functions{
-            margin-top:30px;
-            margin-right: 10px;
-            display: inline-block;
-            width:30%;
-            color:#fff;
-            border-radius: 3px;
-        } */
-        .listbox-not-applied{
-            background-color:#EC678A;
-        }
-        .listbox-playing{
-            background-color:#5BCCF6;
-            
-            box-shadow: inset 2px 2px 2px #9d9d9d;
-        }
-        .listbox-applied{
-            background-color: #A0DA9D;
-        }
-        footer{
-            background-color: #fff;
-            /* padding: 3rem 1.5rem 6rem; */
-            /* padding:1.2rem 1rem 2.5rem;
-            clear:both;
-            position: fixed;
-            bottom:0;
-            height: 30px;
-            left:-20px; */
-            /* width: calc( 100% + 20px ); */
-            width:100%;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            position:relative;
-            margin-top: 10px;
-            padding:40px 0;
-            height:100px;
-            text-align: left;
-        }
-        .control{
-            margin:0;
-        }
-        .level-start{
-            float:left;
-        }
-        .copyright{
-            font-size: 20px;
-            margin-left:20px;
-        }
-        .level-end{
-            width: auto;
-            /* position: fixed; */
-            position: absolute;
-            right:30px;
-        }
-        .button-git{
-            margin-right:20px;
-        }
-
-        .fab{
-            font-size:30px;
-        }
-    </style>
-    
-    <script>
-/*
-    TODO
-    1. EndPoint가 StartPoint보다 앞에있으면 오류를 알릴것
-    2. 화면 크기에 따라 텍스트 크기, 유튜브 화면 크기 변경(media쿼리 이용해서 분기되는 css파일 준비 min-width => 해상도 최소 조건.)
-    3. 모바일 환경에서도 자동재생이 되도록 mute=1로 실행후 재생시 mute 끄기
-    4. 서버 베포 (heroku, cafe24 등등)
-    5. 재생목록 추가시 이전 재생목록의 동영상 id복사하여 value 설정
-    6. 재생목록 저장기능 추가
-*/
-
-        function reSize(){
-            let height = document.getElementsByClassName('youtube')[0].offsetHeight;
-            let elem_option = document.getElementById('options');
-            let padding_option = window.getComputedStyle(elem_option).padding;
-            height -= parseFloat(padding_option)*2;
-            elem_option.style.height = height;
-        }
-
-        //재생시간 밑 동영상 목록을 위한 List구조
-        function List(){
-            this.elements ={};
-            this.index=0;
-            this.length=0;
-        }
-        List.prototype.add = function(element){
-            this.length++;
-            this.elements[this.index++]=element;
-        }
-        List.prototype.get=function(idx){
-            return this.elements[idx];
-        }
-        List.prototype.clear=function(){
-            this.elements = {};
-            this.index=0;
-            this.length=0;
-        }
-        List.prototype.set=function(idx,element){
-            this.elements[idx]=element;
-            if(this.length<idx){
-                this.length=idx;
-            }
-            if(this.index<idx){
-                this.index = idx;
-            }
-        }
-
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        var player;
-        var videolist = new List();
-        var starttimes = new List();
-        var endtimes = new List();
-
-        var videotime=0;
-        var timeupdater=null;
-        
-        var tablenum =0;    //몇개의 재생목록을 받는 div가 생성되었는지 확인받는 변수
-        var currentidx=0;
-        var starttime;
-        var endtime;
-
-        var state;  //0 - 로드하고 재생 전, 1 - 재생 중, 2 - 완료
-
-        function onYouTubeIframeAPIReady(){
-            videolist.add("IOFetSmuOPs");   //기본 재생 동영상 ID mFzHr8Xyo6E
-            player = new YT.Player('player',{
-                host:'https://www.youtube.com',
-                videoId: videolist.get(0),         
-                events:{
-                    'onReady': onPlayerReady
-                },
-                playerVars:{
-                    'disablekb' : 1,
-                    'controls' : 1
-                }
-            });
-        }
-
-        //동영상 준비되면 발생하는 함수
-        function onPlayerReady(event){ 
-            function updateTime(){
-                var oldTime = videotime;
-                if(player&&player.getCurrentTime){
-                    videotime=player.getCurrentTime();//동영상의 현재 재생시간을 기준으로 타이머를 설정
-                }
-                if(videotime!= oldTime){
-                    onProgress(videotime);
-                }
-            }
-            timeupdater = setInterval(updateTime,100);
-            starttimes.add(2361);
-            endtimes.add(2456);
-            starttime =starttimes.get(0);
-            endtime = endtimes.get(0);
-            player.seekTo(starttime);
-            event.target.playVideo();
-        }
-
-        function onProgress(currentTime){
-            if(state===0){
-                if(currentTime!=starttime){
-                    //console.log("시작시간 재설정 중");
-                    player.seekTo(starttime);
-                }else{
-                    state=1;
-                }
-            }else if(currentTime>endtime){
-                state=2;  
-                if(currentidx>=tablenum) {
-                    let repeatbox = document.getElementById("player-button-repeat");
-                    if(repeatbox.checked)    play(0);
-                    else   player.stopVideo();
-                }
-                else{          //다음 영상 재생
-                    play(currentidx+1);
-                    console.log("current idx = "+currentidx);
-                }
-            }
-        }
-
-        function redrawPlayer(){//동영상 재생목록 업데이트
-            updateLists();
-            currentidx=0;
-            play(0);
-        }
-
-        function caltime(str){
-            let colidx = str.indexOf(':');
-            if(colidx!=-1){
-                let min = str.substring(0,colidx);
-                let second = str.substring(colidx+1,str.length);
-                return parseInt(min)*60+parseInt(second);
-            }else   return parseInt(str);
-        }
-
-        function setPoint(num){
-            console.log("current index is "+num);
-            videolist.set(num,getIdFromUrl(document.getElementById("playerContent"+num).value));
-            starttimes.set(num,caltime(document.getElementById("playerStartPoint"+num).value));
-            endtimes.set(num,caltime(document.getElementById("playerEndPoint"+num).value));
-            
-            let table = document.getElementById("player-functions-table"+num);
-            table.classList.remove("listbox-not-applied");
-            table.classList.add("listbox-applied");
-
-            console.log(num+"-> "+"id="+videolist.get(num)+", start="+starttimes.get(num)+", end="+endtimes.get(num));
-        }
-
-        function deletePoint(num){  //id 변경 및 setpoint인자 변경
-            let dtable = document.getElementById("player-functions-table"+num);
-            dtable.parentNode.removeChild(dtable);
-            
-            for(i=num+1;i<=tablenum;i++){
-                let table = document.getElementById("player-functions-table"+i);
-                let video = document.getElementById("playerContent"+i);
-                let start = document.getElementById("playerStartPoint"+i);
-                let end = document.getElementById("playerEndPoint"+i);
-                let pbutton = document.getElementById("player-button-play"+i);
-                let sbutton = document.getElementById("player-button-set"+i);
-                let dbutton = document.getElementById("player-button-delete"+i);
-                table.id = "player-functions-table"+(i-1);
-                video.id = "playerContent"+(i-1);
-                start.id = "playerStartPoint"+(i-1);
-                end.id = "playerEndPoint"+(i-1);
-                pbutton.id="player-button-play"+(i-1);
-                pbutton.setAttribute("onClick","play("+(i-1)+")");
-                sbutton.id = "player-button-set"+(i-1);
-                sbutton.setAttribute("onClick","setPoint("+(i-1)+");");
-                dbutton.id="player-button-delete"+(i-1);
-                dbutton.setAttribute("onClick","deletePoint("+(i-1)+")");
-                }
-            tablenum--;
-        }
-
-        function addTable(){
-            var newTable = document.createElement("table");
-            newTable.setAttribute("id","player-functions-table"+(++tablenum));
-            console.log("재생목록 추가"+tablenum);
-            newTable.setAttribute("class","listbox listbox-not-applied");
-                var sectiontable="<tbody>";
-                    sectiontable+="<tr>";
-                        sectiontable+="<td class=\"noborder player-group-header\">동영상 ID</td>";
-                        sectiontable+="<td class=\"player-group-options\">"
-                            sectiontable+="<div class=\"player-option-row\">";
-                                sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerContent"+tablenum+"\" value=\"mFzHr8Xyo6E\" alt=\"동영상 ID를 입력하세요\">"
-                            sectiontable+="</div>";
-                        sectiontable+="</td>";
-                        sectiontable+="<td class=\"player-group-button\">";
-                                sectiontable+="<button id=\"player-button-play"+tablenum +"\" type=\"button\" class=\"button\" onclick=\"play("+tablenum +");\">재생</button>";
-                            sectiontable+="</td>";
-                    sectiontable+="</tr>";            
-                    sectiontable+="<tr>";
-                        sectiontable+="<td class=\"noborder player-group-header\">시작 지점</td>";
-                        sectiontable+="<td class=\"player-group-options\">";
-                            sectiontable+="<div class=\"player-option-row\">";
-                                sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerStartPoint"+tablenum +"\" value=\"2361\" alt=\"2361\">"
-                            sectiontable+="</div>";
-                        sectiontable+="</td>"
-                        sectiontable+="<td class=\"player-group-button\">"
-                            sectiontable+="<button id=\"player-button-set"+tablenum+"\" type=\"button\" class=\"button\" onclick=\"setPoint("+tablenum+");\">설정</button>"
-                        sectiontable+="</td>"
-                    sectiontable+="</tr>"
-                    sectiontable+="<tr>"
-                        sectiontable+="<td class=\"noborder player-group-header\">종료 지점</td>"
-                        sectiontable+="<td class=\"player-group-options\">"
-                            sectiontable+="<div class=\"player-option-row\">"
-                                sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerEndPoint"+tablenum +"\" value=\"2456\" alt=\"2456\">";
-                            sectiontable+="</div>"
-                        sectiontable+="</td>"
-                        sectiontable+="<td class=\"player-group-button\">"
-                            sectiontable+="<button id=\"player-button-delete"+tablenum+"\" type=\"button\" class=\"button\" onclick=\"deletePoint("+tablenum+");\">삭제</button>"
-                        sectiontable+="</td>"
-                    sectiontable+="</tr>"
-                sectiontable+="</tbody>"
-            newTable.innerHTML = sectiontable;
-            var tableparent = document.getElementById("player-functions");
-            tableparent.appendChild(newTable);
-        }
-
-        function updatePoints(){
-            starttimes.clear();
-            endtimes.clear();
-            console.log("tablenum is "+tablenum);
-            for(i=0;i<=tablenum;i++){
-                var sid="playerStartPoint"+i;
-                var eid="playerEndPoint"+i;
-                starttimes.add(caltime(document.getElementById(sid).value));
-                endtimes.add(caltime(document.getElementById(eid).value));
-                console.log(i+"-> "+" start="+starttimes.get(i)+", end="+endtimes.get(i));
-            }
-        }
-        function updateLists(){
-            videolist.clear();
-            starttimes.clear();
-            endtimes.clear();
-            for(i=0;i<=tablenum;i++){
-                videolist.add(getIdFromUrl(document.getElementById("playerContent"+i).value));
-                starttimes.add(caltime(document.getElementById("playerStartPoint"+i).value));
-                endtimes.add(caltime(document.getElementById("playerEndPoint"+i).value));
-                console.log(i+"-> "+"id="+videolist.get(i)+", start="+starttimes.get(i)+", end="+endtimes.get(i));
-            }
-        }        
-
-        function getIdFromUrl(str){
-            if(str.indexOf("https")!=-1){   //URL입력에 두가지 경우의 수 존재
-            //1.웹브라우저의 주소 링크(https://youtube.com/watch?v=(id))
-                let pos = str.indexOf('v=');
-                let substr;
-                let qpos;
-                if(pos!=-1)   substr = str.substring(pos+2,str.length);
-                //2.유튜브 내의 공유 링크(https://youtu.be/(id))
-                else{
-                    pos = str.indexOf('u.be/');
-                    substr = str.substring(pos+5,str.length);
-                }
-                qpos = substr.indexOf('?');
-                if(qpos!=-1){
-                    return substr.substring(0,qpos);
-                }
-                return substr;
-            }else{//URL입력이 아닌경우
-                return str;
-            }
-
-        }
-
-        function loadvideo(){
-            var url = player.getVideoUrl();
-            var andpos=url.indexOf('v=');
-            var id;
-            if(andpos != -1){
-                id = url.substring(andpos+2,url.length);
-            }else{
-                id = url;
-            }
-            console.log(id);
-            if(id!=videolist.get(currentidx)){
-                player.loadVideoById(
-                    {'videoId':videolist.get(currentidx), 'starttime':starttimes.get(currentidx)});
-            }
-        }
-
-        function  play(idx){
-            state=0;
-            let table = document.getElementById("player-functions-table"+currentidx);
-            table.classList.remove("listbox-playing");
-            table.classList.add("listbox-applied"); 
-
-            currentidx=idx;
-            setPoint(idx);
-            loadvideo();
-            starttime = starttimes.get(idx);
-            endtime = endtimes.get(idx);
-
-            table = document.getElementById("player-functions-table"+idx);
-            table.classList.remove("listbox-applied");
-            table.classList.add("listbox-playing");
-
-            console.log("starttime="+starttime+", endttime="+endtime);
-            player.seekTo(starttime);
-        }
-
-
-    </script> 
+    <script type="text/javascript" src="sectionfunctions.js"></script>
 </html>
