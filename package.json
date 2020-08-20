@@ -1,0 +1,19 @@
+{
+  "name": "sectionplayer",
+  "version": "1.0.0",
+  "description": "개인 토이프로젝트 저장소",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niveus323/Toyprojects.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/niveus323/Toyprojects/issues"
+  },
+  "homepage": "https://github.com/niveus323/Toyprojects#readme"
+}
