@@ -8,8 +8,9 @@
     6. 작은 화면에서 재생목록 css 변경(추후 추가 수정 예정)
     7. 재생목록 변경기능 추가
 */
-const winmedia = window.matchMedia('(min-width: 1145px)');
 
+//재생목록 크기 조절을 위한 reSize함수
+const winmedia = window.matchMedia('(min-width: 1145px)');
 function reSize(){ 
     let elem_youtube = document.getElementsByClassName('youtube')[0]
     let elem_option = document.getElementById('options');
