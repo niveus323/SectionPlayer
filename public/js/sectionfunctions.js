@@ -2,11 +2,10 @@
     TODO
     1. EndPoint가 StartPoint보다 앞에있으면 오류를 알릴것
     2. 모바일 환경에서도 자동재생이 되도록 mute=1로 실행후 재생시 mute 끄기
-    3. 서버 베포 (heroku, cafe24 등등)
-    4. 재생목록 추가시 이전 재생목록의 동영상 id복사하여 value 설정
-    5. 재생목록 저장기능 추가 ()
-    6. 작은 화면에서 재생목록 css 변경(추후 추가 수정 예정)
-    7. 재생목록 변경기능 추가
+    3. 재생목록 저장기능 추가 ()
+    4. 작은 화면에서 재생목록 css 변경(추후 추가 수정 예정)
+    5. 재생목록 변경기능 추가
+    6. ios환경에서의 자동재생 기능 설정 (ios환경일 경우 muted=1)
 */
 
 //재생목록 크기 조절을 위한 reSize함수
@@ -56,6 +55,9 @@ List.prototype.set=function(idx,element){
         this.index = idx;
     }
 }
+List.prototype.last=function(){
+    return this.elements[this.length];
+}
 
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
@@ -77,7 +79,7 @@ var endtime;
 var state;  //0 - 로드하고 재생 전, 1 - 재생 중, 2 - 완료
 
 function onYouTubeIframeAPIReady(){
-    videolist.add("IOFetSmuOPs");   //기본 재생 동영상 ID mFzHr8Xyo6E
+    videolist.add("S0RiTTbhVBE");   //기본 재생 동영상 ID mFzHr8Xyo6E
     player = new YT.Player('player',{
         host:'https://www.youtube.com',
         videoId: videolist.get(0),         
@@ -103,8 +105,10 @@ function onPlayerReady(event){
         }
     }
     timeupdater = setInterval(updateTime,100);
-    starttimes.add(2361);
-    endtimes.add(2456);
+    // starttimes.add(10);
+    // endtimes.add(30);
+    starttimes.set(0,caltime(document.getElementById("playerStartPoint0").value));
+    endtimes.set(0,caltime(document.getElementById("playerEndPoint0").value));
     starttime =starttimes.get(0);
     endtime = endtimes.get(0);
     player.seekTo(starttime);
@@ -187,16 +191,18 @@ function deletePoint(num){  //id 변경 및 setpoint인자 변경
 }
 
 function addTable(){
-    var newTable = document.createElement("table");
+    let defaultstart = starttimes.last();
+    let defaultend = endtimes.last();
+    let newTable = document.createElement("table");
     newTable.setAttribute("id","player-functions-table"+(++tablenum));
     console.log("재생목록 추가"+tablenum);
     newTable.setAttribute("class","listbox listbox-not-applied");
-        var sectiontable="<tbody>";
+        let sectiontable="<tbody>";
             sectiontable+="<tr>";
                 sectiontable+="<td class=\"noborder player-group-header\">동영상 ID</td>";
                 sectiontable+="<td class=\"player-group-options\">"
                     sectiontable+="<div class=\"player-option-row\">";
-                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerContent"+tablenum+"\" value=\"mFzHr8Xyo6E\" alt=\"동영상 ID를 입력하세요\">"
+                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerContent"+tablenum+"\" value=\"S0RiTTbhVBE\" alt=\"동영상 ID를 입력하세요\">"
                     sectiontable+="</div>";
                 sectiontable+="</td>";
                 sectiontable+="<td class=\"player-group-button\">";
@@ -207,7 +213,7 @@ function addTable(){
                 sectiontable+="<td class=\"noborder player-group-header\">시작 지점</td>";
                 sectiontable+="<td class=\"player-group-options\">";
                     sectiontable+="<div class=\"player-option-row\">";
-                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerStartPoint"+tablenum +"\" value=\"2361\" alt=\"2361\">"
+                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerStartPoint"+tablenum +"\" value="+defaultstart+" alt="+defaultstart+">"
                     sectiontable+="</div>";
                 sectiontable+="</td>"
                 sectiontable+="<td class=\"player-group-button\">"
@@ -218,7 +224,7 @@ function addTable(){
                 sectiontable+="<td class=\"noborder player-group-header\">종료 지점</td>"
                 sectiontable+="<td class=\"player-group-options\">"
                     sectiontable+="<div class=\"player-option-row\">"
-                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerEndPoint"+tablenum +"\" value=\"2456\" alt=\"2456\">";
+                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerEndPoint"+tablenum +"\" value="+defaultend+" alt="+defaultend+">";
                     sectiontable+="</div>"
                 sectiontable+="</td>"
                 sectiontable+="<td class=\"player-group-button\">"
@@ -227,7 +233,7 @@ function addTable(){
             sectiontable+="</tr>"
         sectiontable+="</tbody>"
     newTable.innerHTML = sectiontable;
-    var tableparent = document.getElementById("player-functions");
+    let tableparent = document.getElementById("player-functions");
     tableparent.appendChild(newTable);
 }
 
