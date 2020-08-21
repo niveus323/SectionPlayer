@@ -6,6 +6,9 @@
     4. 작은 화면에서 재생목록 css 변경(추후 추가 수정 예정)
     5. 재생목록 변경기능 추가
     6. ios환경에서의 자동재생 기능 설정 (ios환경일 경우 muted=1)
+
+    긴급
+    1. 2개의 재생목록에서 2번째 재생목록 실행 중 삭제하면 2번째 재생목록을 반복함
 */
 
 //재생목록 크기 조절을 위한 reSize함수
@@ -152,7 +155,7 @@ function caltime(str){
 }
 
 function setPoint(num){
-    console.log("current index is "+num);
+    let curvideo = videolist.get(currentidx);
     videolist.set(num,getIdFromUrl(document.getElementById("playerContent"+num).value));
     starttimes.set(num,caltime(document.getElementById("playerStartPoint"+num).value));
     endtimes.set(num,caltime(document.getElementById("playerEndPoint"+num).value));
@@ -161,7 +164,10 @@ function setPoint(num){
     table.classList.remove("listbox-not-applied");
     table.classList.add("listbox-applied");
 
-    console.log(num+"-> "+"id="+videolist.get(num)+", start="+starttimes.get(num)+", end="+endtimes.get(num));
+    if(curvideo!=videolist.get(num)){
+        console.log(1);
+        play(currentidx);
+    }
 }
 
 function deletePoint(num){  //id 변경 및 setpoint인자 변경
@@ -191,44 +197,42 @@ function deletePoint(num){  //id 변경 및 setpoint인자 변경
 }
 
 function addTable(){
-    let defaultstart = starttimes.last();
-    let defaultend = endtimes.last();
     let newTable = document.createElement("table");
     newTable.setAttribute("id","player-functions-table"+(++tablenum));
     console.log("재생목록 추가"+tablenum);
     newTable.setAttribute("class","listbox listbox-not-applied");
         let sectiontable="<tbody>";
             sectiontable+="<tr>";
-                sectiontable+="<td class=\"noborder player-group-header\">동영상 ID</td>";
+                sectiontable+="<td class=\"noborder player-group-header\">동영상 URL</td>";
                 sectiontable+="<td class=\"player-group-options\">"
                     sectiontable+="<div class=\"player-option-row\">";
-                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerContent"+tablenum+"\" value=\"S0RiTTbhVBE\" alt=\"동영상 ID를 입력하세요\">"
+                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerContent"+tablenum+"\" value=\"\" placeholder=\"URL 또는 동영상 ID\">";
                     sectiontable+="</div>";
                 sectiontable+="</td>";
                 sectiontable+="<td class=\"player-group-button\">";
-                        sectiontable+="<button id=\"player-button-play"+tablenum +"\" type=\"button\" class=\"button\" onclick=\"play("+tablenum +");\"><i class=\"fas fa-play\"></i></button>";
+                        sectiontable+="<button id=\"player-button-play"+tablenum +"\" type=\"button\" class=\"button\" onclick=\"play("+tablenum +");\">재생</button>";
                     sectiontable+="</td>";
             sectiontable+="</tr>";            
             sectiontable+="<tr>";
                 sectiontable+="<td class=\"noborder player-group-header\">시작 지점</td>";
                 sectiontable+="<td class=\"player-group-options\">";
                     sectiontable+="<div class=\"player-option-row\">";
-                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerStartPoint"+tablenum +"\" value="+defaultstart+" alt="+defaultstart+">"
+                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerStartPoint"+tablenum +"\" value=\"\" placeholder=분:초 또는 초>"
                     sectiontable+="</div>";
                 sectiontable+="</td>"
                 sectiontable+="<td class=\"player-group-button\">"
-                    sectiontable+="<button id=\"player-button-set"+tablenum+"\" type=\"button\" class=\"button\" onclick=\"setPoint("+tablenum+");\"><i class=\"fas fa-check\"></i></button>"
+                    sectiontable+="<button id=\"player-button-set"+tablenum+"\" type=\"button\" class=\"button\" onclick=\"setPoint("+tablenum+");\">적용</button>"
                 sectiontable+="</td>"
             sectiontable+="</tr>"
             sectiontable+="<tr>"
                 sectiontable+="<td class=\"noborder player-group-header\">종료 지점</td>"
                 sectiontable+="<td class=\"player-group-options\">"
                     sectiontable+="<div class=\"player-option-row\">"
-                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerEndPoint"+tablenum +"\" value="+defaultend+" alt="+defaultend+">";
+                        sectiontable+="<input type=\"text\" class=\"player-text-input\" size=\"18\" id=\"playerEndPoint"+tablenum +"\" value=\"\" placeholder=분:초 또는 초>";
                     sectiontable+="</div>"
                 sectiontable+="</td>"
                 sectiontable+="<td class=\"player-group-button\">"
-                    sectiontable+="<button id=\"player-button-delete"+tablenum+"\" type=\"button\" class=\"button\" onclick=\"deletePoint("+tablenum+");\"><i class=\"far fa-trash-alt\"></i></button>"
+                    sectiontable+="<button id=\"player-button-delete"+tablenum+"\" type=\"button\" class=\"button\" onclick=\"deletePoint("+tablenum+");\">삭제</button>"
                 sectiontable+="</td>"
             sectiontable+="</tr>"
         sectiontable+="</tbody>"
@@ -265,9 +269,10 @@ function getIdFromUrl(str){
     if(str.indexOf("https")!=-1){   //URL입력에 두가지 경우의 수 존재
     //1.웹브라우저의 주소 링크(https://youtube.com/watch?v=(id))
         let pos = str.indexOf('v=');
-        let substr;
-        let qpos;
-        if(pos!=-1)   substr = str.substring(pos+2,str.length);
+        let substr,qpos,epos;
+        if(pos!=-1){
+            substr = str.substring(pos+2,str.length);
+        }   
         //2.유튜브 내의 공유 링크(https://youtu.be/(id))
         else{
             pos = str.indexOf('u.be/');
@@ -275,7 +280,11 @@ function getIdFromUrl(str){
         }
         qpos = substr.indexOf('?');
         if(qpos!=-1){
-            return substr.substring(0,qpos);
+            substr =  substr.substring(0,qpos);
+        }
+        epos = substr.indexOf('&');
+        if(epos!=-1){
+            substr = substr.substring(0,epos);
         }
         return substr;
     }else{//URL입력이 아닌경우
