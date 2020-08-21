@@ -12,6 +12,6 @@ app.get('/',function(request,response){
     response.render('youtubeSectionPlayer.html');
 });
 
-var server = app.listen('52484',()=>{
+var server = app.listen(process.env.PORT||'52484',()=>{
     console.log('App is listening on port 52484');
 });
