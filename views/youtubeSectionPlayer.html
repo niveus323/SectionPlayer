@@ -1,0 +1,90 @@
+<html>
+    <head>
+        <title>Youtube 구간재생</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+        <link rel="stylesheet" type="text/css" href="css/sectionDesign.css">
+        
+    </head>
+    <body onresize="reSize()" onload="reSize()">
+        <div class="main">
+            <h1>Youtube 동영상을 원하는 구간만!</h1>
+            <section>
+                <div class="youtube">
+                    <div id="player"></div>
+                </div>
+            </section>
+            <div class="player-options" id="options">
+                <div id="update-player-button">
+                    <button id="player-button-redraw" type="button" class="button-playerlist"
+                        onclick="redrawPlayer();">재생목록 재생하기</button>
+                    <button id="player-button-video" type="button" class="button-playerlist" onclick="addTable();">재생목록 추가</button>
+                    <input type="checkbox" id="player-button-repeat" name="repeat">
+                        <label class="button-playerlist" for="repeat">반복</label>
+                </div>
+                <div id="player-functions">
+                    <table id="player-functions-table0" class="listbox listbox-playing">
+                        <tbody>
+                            <tr>
+                                <td class="noborder player-group-header">동영상 ID</td>
+                                <td class="player-group-options">
+                                    <div class="player-option-row">
+                                        <input type="text" class="player-text-input" size="18" 
+                                            id="playerContent0" value="mFzHr8Xyo6E" alt="동영상 ID를 입력하세요">
+                                            <!-- mFzHr8Xyo6E IOFetSmuOPs-->
+                                    </div>
+                                </td>
+                                <td class="player-group-button">
+                                    <button id="player-button-play" type="button" class="button" onclick="play(0);"><i class="fas fa-play"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="noborder player-group-header">시작 지점</td>
+                                <td class="player-group-options">
+                                    <div class="player-option-row">
+                                        <input type="text" class="player-text-input" size="18"
+                                        id="playerStartPoint0" value="2361" alt="2361">
+                                    </div>
+                                </td>
+                                <td class="player-group-button">
+                                    <button id="player-button-set" type="button" class="button" onclick="setPoint(0);"><i class="fas fa-check"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="noborder player-group-header">종료 지점</td>
+                                    <td class="player-group-options">
+                                        <div class="player-option-row">
+                                            <input type="text" class="player-text-input" size="18"
+                                            id="playerEndPoint0" value="2456" alt="2456">
+                                    </div>
+                                </td>
+                                <td class="player-group-button">
+                                    <button id="player-button-delete" type="button" class="button" onclick="deletePoint(0);"><i class="far fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="level">
+                <div class="level-start">
+                    <span class="copyright">© 2020 Made by HaengLee.</span>
+                </div>
+                <div class="level-end">
+                    <p class="control">
+                        <a class="button-git" target="_blank" rel="noopener" title="GitHub" href="https://github.com/niveus323/Toyprojects">
+                            <i class="fab fa-github-square"></i>
+                        </a>
+                        <a class="button-blog" target="_blank" rel="noopener" title="Blog"
+                        href="https://niveus323.github.io">
+                        <i class="fab fa-blogger"></i>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </body>
+    
+    <script type="application/javascript" src="js/sectionfunctions.js"></script>
+</html>

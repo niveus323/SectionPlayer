@@ -1,0 +1,153 @@
+@media (min-width: 1145px){
+    .main{
+    min-height: 87%;
+    padding:10px 0 0 20px;
+    } 
+    .youtube{   /*9:16*/
+        position:relative;
+        /* width:100%; */
+        /* padding-bottom: 56.25%; */
+        width:71%;
+        padding-bottom: 41%;
+        /* width:80%;
+        padding-bottom: 45%; */
+        height:0;
+        float:left;
+    }
+    .player-options{
+        margin-left: 3px;
+        float: left;
+    }
+    .listbox{
+        margin-left: 5px;
+    }
+    footer{
+        padding:30px 0 0 0;
+        height: 80px;
+        position: absolute;
+        bottom:0;
+    }
+}
+@media (max-width: 1144px){
+    body > div > h1{
+        text-align: center;
+    }
+
+    .main{
+        min-height: 88%;
+        padding:10px 0 5px 5px;
+    } 
+    .youtube{   
+        position:relative;
+        width:100%;
+        padding-bottom: 56.25%;
+        height:0;
+        
+    }
+    .player-options{
+        margin-top: 3px;
+        float: none;
+    }
+    .listbox{
+        width:100%;
+    }
+    .listbox > tbody > tr{
+        height:50px;
+    }
+    .player-group-header{
+        font-size: 30px;
+        width:20%;
+    }
+    .player-group-options{
+        width:60%;
+    }
+    .player-text-input{
+        width:90%;
+        font-size:28px;
+    }
+    .player-group-button{
+        height:30px;
+    }
+    .button-playerlist{
+        font-size: 30px;
+    }
+    #player-button-repeat{
+        height:30px;
+        width:30px;
+    }
+    footer{
+        margin-top: 10px;
+        padding:25px 0 0 0;
+        height:70px;
+    }
+}
+body{
+    height: 100%;
+    overflow:auto;
+    /* padding: 20px; */
+    box-sizing: border-box;
+    margin: auto;
+    background-color: #f7f7f7;    
+}
+
+#player{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.player-options{
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+    border-radius: 3px;
+    padding:3px;
+    overflow: auto;
+}
+
+.listbox{
+    margin-top: 5px;
+    border-radius: 3px;
+}
+.button{
+    width: 100%;
+    height: 100%;
+}
+.listbox-not-applied{
+    background-color:#EC678A;
+}
+.listbox-playing{
+    background-color:#5BCCF6;
+    
+    box-shadow: inset 2px 2px 2px #9d9d9d;
+}
+.listbox-applied{
+    background-color: #A0DA9D;
+}
+footer{
+    background-color: #fff;
+    width:100%;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    text-align: left;
+}
+.control{
+    margin:0;
+}
+.level-start{
+    float:left;
+}
+.copyright{
+    font-size: 20px;
+    margin-left:20px;
+}
+.level-end{
+    width: auto;
+    /* position: fixed; */
+    position: absolute;
+    right:30px;
+}
+.button-git{
+    margin-right:20px;
+}
+
+.fab{
+    font-size:30px;
+}

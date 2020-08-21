@@ -4,7 +4,9 @@
   "description": "개인 토이프로젝트 저장소",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./main.js"
+
   },
   "repository": {
     "type": "git",
@@ -17,6 +19,7 @@
   },
   "homepage": "https://github.com/niveus323/Toyprojects#readme",
   "dependencies": {
-    
+    "ejs": "^3.1.5",
+    "express": "^4.17.1"
   }
 }
