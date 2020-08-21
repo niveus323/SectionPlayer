@@ -1,17 +1,14 @@
-const http = require('http');
-const fs = require('fs');
-const url = require('url');
-const { request } = require('https');
+const express = require('express');
+const app = express();
+const path = require('path');
+const port = normalizePort(process.env.PORT||'52484');
+app.set('port',port);
+app.use(express.static(path.join(__dirname,'/')));
 
-var app = http.createServer(function(request,response){
-    fs.readFile('youtubeSectionPlayer.html',function(err,data){
-        if(err){
-            console.log('file read Error!');
-        }else{
-            response.writeHead(200, { 'Content-Type' : 'text/html;  charset=utf-8'});
-            response.end(data);
-        }
-    });
-}).listen(52484,function(){
-    console.log('server running at http://localhost:52484');
-})
+app.get('/',function(request,response){
+    response.render('youtubeSectionPlayer.html');
+});
+
+var server = app.listen(PORT,()=>{
+    console.log('App is listening on port ${PORT}');
+});

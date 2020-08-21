@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/niveus323/Toyprojects/issues"
   },
-  "homepage": "https://github.com/niveus323/Toyprojects#readme"
+  "homepage": "https://github.com/niveus323/Toyprojects#readme",
+  "dependencies": {
+    
+  }
 }
