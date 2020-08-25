@@ -7,8 +7,10 @@
     5. 재생목록 변경기능 추가
     6. ios환경에서의 자동재생 기능 설정 (ios환경일 경우 muted=1)
     7. 적용버튼 누를 때 시작시간 적용없으면 처음부터, 종료시간 적용 없으면 마지막까지 재생되도록하기
+    8. url에 재생목록을 넣어서 입력하면 적용되도록
 
     긴급
+    1. 2개의 재생목록에서 재생중인 목록 이전의 재생목록 삭제, 이후 비어있는 목록 추가시 반복재생에 의하여 비어있는 목록을 재생하는 오류 발생 - [0,1]에서 0지우면 [1]이 되고 0을 찾으면 없는걸로 표시됨
 */
 
 //재생목록 크기 조절을 위한 reSize함수
@@ -39,19 +41,10 @@ function List(){
     this.endtimes = [];
     this.length=0;  //빈공간을 포함한 전체 길이
 }
-// List.prototype.add = function(num,name,start,end){
-//     this.index++;
-//     this.id[this.length]=num;//몇번째 functions-table인지 저장
-//     this.video[this.length] = name;
-//     this.starttimes[this.length]=start;
-//     this.endtimes[this.length]=end;
-//     this.id.sort((a,b)=>a-b);   //재생목록은 순서대로
-//     this.length++;
-// }
 List.prototype.getVideo=function(num){ return this.video[num]; }
 List.prototype.getStart=function(num){return this.starttimes[num];}
 List.prototype.getEnd=function(num){return this.endtimes[num];}
-List.prototype.size=function(){ return this.id.size;}
+List.prototype.size=function(){ return this.id.size;}   //사용하지 않음
 List.prototype.clear=function(){
     this.id=[];
     this.video =[];
@@ -59,24 +52,32 @@ List.prototype.clear=function(){
     this.endtimes = [];
     this.length=0;
 }
+//에러: 재생목록이 변화하면서 id와 다른 값을 같게 됨으로부터 생성되는 버그
 List.prototype.set=function(num,name,start,end){
-    let idx = this.id.indexOf(num);
+    let idx = this.id.indexOf(num); //[0,1]에서 0지우면 [1], 0을 찾으면 없는걸로 표시됨
+    console.log('on set finded idx:'+idx);
     if(idx<0){
         this.id[this.length]=num;
         this.id.sort((a,b)=>a-b);
         this.length++;
     }
-    console.log(this.length);
+     console.log('on set length:'+this.length);
     this.video[num] = name;
     this.starttimes[num] = start;
     this.endtimes[num] = end;
 }
-List.prototype.delete=function(num){
+List.prototype.delete=function(num){    //1.삭제시 num 보다 큰 id를 변경 2.div의 num자체를 변화시키지 않도록 하기
     let idx = this.id.indexOf(num);
     if(idx>-1){
         this.id.splice(idx,1);  //id에만 속하지 않는다면 접근할 일이 없고 set이나 push함수로 덮어서 사용할 수 있음
     }
+        // this.video.splice(num,1);
+        // this.starttimes.splice(num,1);
+        // this.endtimes.splice(num,1);
     this.length--;
+    
+    console.log('on delete length:'+length);
+    
 }
 List.prototype.push=function(num,name,start,end){
     this.id[this.length]=num;
@@ -87,14 +88,15 @@ List.prototype.push=function(num,name,start,end){
         return a-b;
     });
     this.length++;
-    console.log(this.length);
+    console.log('on push length:'+length);
 }
 List.prototype.nextId=function(num){
-    console.log(this.length);
-    console.log(num);
-    if(num<0) return (this.length>-1)?0:-1;
+    if(num<0) return (this.length>-1)?this.id[0]:-1;
     let idx = this.id.indexOf(num);
     return (idx>-1&&idx+1<this.length)?this.id[idx+1]:-1;
+}
+List.prototype.firstId=function(){
+    return (this.length>-1)?this.id[0]:-1;
 }
 
 let tag = document.createElement('script');
@@ -116,10 +118,6 @@ var state;  //0 - 로드하고 재생 전, 1 - 재생 중, 2 - 완료
 
 function onYouTubeIframeAPIReady(){
     //기본 재생 동영상 ID mFzHr8Xyo6E
-    // playlist.set(0,0,
-    //     "S0RiTTbhVBE",
-    //     caltime(document.getElementById("playerStartPoint0").value),
-    //     caltime(document.getElementById("playerEndPoint0").value));
     playlist.push(0,"S0RiTTbhVBE",
         caltime(document.getElementById("playerStartPoint0").value),
         caltime(document.getElementById("playerEndPoint0").value));
@@ -131,7 +129,8 @@ function onYouTubeIframeAPIReady(){
         },
         playerVars:{
             'disablekb' : 1,
-            'controls' : 1
+            'controls' : 1,
+            'mute' : (/iPhone|iPad|iPod/i.test(navigator.userAgent))?1:0
         }
     });
 }
@@ -165,23 +164,16 @@ function onProgress(currentTime){
         }
     }else if(currentTime>endtime){
         state=2;  
+        console.log('currentidx is '+currentidx );
         let nextid = playlist.nextId(currentidx);
         if(nextid<0){
             let repeatbox = document.getElementById("player-button-repeat");
-            if(repeatbox.checked)    play(0);
+            if(repeatbox.checked&&playlist.firstId>-1)    play(playlist.firstId());   //0번이 아니라 가장 앞에있는 id[0]
             else   player.stopVideo();
         }else{
+            console.log('nextid: '+nextid);
             play(nextid);
         }
-
-        // if(currentidx>=tablenum) {  //삭제시 tablenum이 줄어들면서 에러 발생
-        //     let repeatbox = document.getElementById("player-button-repeat");
-        //     if(repeatbox.checked)    play(0);
-        //     else   player.stopVideo();
-        // }
-        // else{          //다음 영상 재생 (이후 인덱스들 중 적용이 되어있는 인덱스만)
-        //     play(currentidx+1); 
-        // }
     }
 }
 
@@ -200,19 +192,21 @@ function caltime(str){
 }
 
 function setPoint(num){
+    //현재 재생중인 목록을 변경한 경우
+    //1.동영상 변경 -> 동영상 재생
+    //2.시작시간 변경 -> 현재시간과 비교하여 변경
+    //3.종료시간 변경 -> 종료시간만 변경
     let curvideo = playlist.getVideo(currentidx);
-    // videolist.set(num,getIdFromUrl(document.getElementById("playerContent"+num).value));
-    // starttimes.set(num,caltime(document.getElementById("playerStartPoint"+num).value));
-    // endtimes.set(num,caltime(document.getElementById("playerEndPoint"+num).value));
-    
+    console.log('setPoint num:'+num);
     playlist.set(num,
         getIdFromUrl(document.getElementById("playerContent"+num).value),
         caltime(document.getElementById("playerStartPoint"+num).value),
         caltime(document.getElementById("playerEndPoint"+num).value));
 
     let table = document.getElementById("player-functions-table"+num);
-    table.classList.remove("listbox-not-applied");
-    table.classList.add("listbox-applied");
+    if(table.classList.contains("listbox-not-applied"))    table.classList.remove("listbox-not-applied");
+    table.classList.add("listbox-applied");    
+    
 
     if(currentidx==num &&curvideo!=playlist.getVideo(num)){   //적용한 재생목록이 현재 재생중인데 변경된 경우
         play(currentidx);
@@ -228,26 +222,26 @@ function deletePoint(num){  //삭제 시 에러발생 -> 현재 재생중인 경
     let dtable = document.getElementById("player-functions-table"+num);
     dtable.parentNode.removeChild(dtable);
     
-    for(i=num+1;i<=tablenum;i++){
-        let table = document.getElementById("player-functions-table"+i);
-        let video = document.getElementById("playerContent"+i);
-        let start = document.getElementById("playerStartPoint"+i);
-        let end = document.getElementById("playerEndPoint"+i);
-        let pbutton = document.getElementById("player-button-play"+i);
-        let sbutton = document.getElementById("player-button-set"+i);
-        let dbutton = document.getElementById("player-button-delete"+i);
-        table.id = "player-functions-table"+(i-1);
-        video.id = "playerContent"+(i-1);
-        start.id = "playerStartPoint"+(i-1);
-        end.id = "playerEndPoint"+(i-1);
-        pbutton.id="player-button-play"+(i-1);
-        pbutton.setAttribute("onClick","play("+(i-1)+")");
-        sbutton.id = "player-button-set"+(i-1);
-        sbutton.setAttribute("onClick","setPoint("+(i-1)+");");
-        dbutton.id="player-button-delete"+(i-1);
-        dbutton.setAttribute("onClick","deletePoint("+(i-1)+")");
-    }
-    tablenum--;
+    // for(i=num+1;i<=tablenum;i++){
+    //     let table = document.getElementById("player-functions-table"+i);
+    //     let video = document.getElementById("playerContent"+i);
+    //     let start = document.getElementById("playerStartPoint"+i);
+    //     let end = document.getElementById("playerEndPoint"+i);
+    //     let pbutton = document.getElementById("player-button-play"+i);
+    //     let sbutton = document.getElementById("player-button-set"+i);
+    //     let dbutton = document.getElementById("player-button-delete"+i);
+    //     table.id = "player-functions-table"+(i-1);
+    //     video.id = "playerContent"+(i-1);
+    //     start.id = "playerStartPoint"+(i-1);
+    //     end.id = "playerEndPoint"+(i-1);
+    //     pbutton.id="player-button-play"+(i-1);
+    //     pbutton.setAttribute("onClick","play("+(i-1)+")");
+    //     sbutton.id = "player-button-set"+(i-1);
+    //     sbutton.setAttribute("onClick","setPoint("+(i-1)+");");
+    //     dbutton.id="player-button-delete"+(i-1);
+    //     dbutton.setAttribute("onClick","deletePoint("+(i-1)+")");
+    // }
+    // tablenum--;
 }
 
 function addTable(){
@@ -295,31 +289,18 @@ function addTable(){
     tableparent.appendChild(newTable);
 }
 
-function updatePoints(){
-    starttimes.clear();
-    endtimes.clear();
-    // console.log("tablenum is "+tablenum);
-    for(i=0;i<=tablenum;i++){
-        var sid="playerStartPoint"+i;
-        var eid="playerEndPoint"+i;
-        starttimes.add(caltime(document.getElementById(sid).value));
-        endtimes.add(caltime(document.getElementById(eid).value));
-        // console.log(i+"-> "+" start="+starttimes.get(i)+", end="+endtimes.get(i));
-    }
-}
 function updateLists(){
-    // videolist.clear();
-    // starttimes.clear();
-    // endtimes.clear();
     playlist.clear();
     for(i=0;i<=tablenum;i++){
-        // videolist.add(getIdFromUrl(document.getElementById("playerContent"+i).value));
-        // starttimes.add(caltime(document.getElementById("playerStartPoint"+i).value));
-        // endtimes.add(caltime(document.getElementById("playerEndPoint"+i).value));
-        playlist.set(i,
-            getIdFromUrl(document.getElementById("playerContent"+i).value),
-            caltime(document.getElementById("playerStartPoint"+i).value),
-            caltime(document.getElementById("playerEndPoint"+i).value));
+        if(document.getElementById("player-functions-table"+i)){
+            console.log(i+"is finded");
+            playlist.set(i,
+                getIdFromUrl(document.getElementById("playerContent"+i).value),
+                caltime(document.getElementById("playerStartPoint"+i).value),
+                caltime(document.getElementById("playerEndPoint"+i).value));
+        }
+        
+        
         // console.log(i+"-> "+"id="+videolist.get(i)+", start="+starttimes.get(i)+", end="+endtimes.get(i));
     }
 }        
@@ -354,6 +335,7 @@ function getIdFromUrl(str){
 
 function loadvideo(){
     var url = player.getVideoUrl();
+    console.log(url);
     var andpos=url.indexOf('v=');
     var id;
     if(andpos != -1){
@@ -361,11 +343,7 @@ function loadvideo(){
     }else{
         id = url;
     }
-    // console.log(id);
-    // if(id!=videolist.get(currentidx)){
     if(id!=playlist.getVideo(currentidx)){
-        // player.loadVideoById(
-        //     {'videoId':videolist.get(currentidx), 'starttime':starttimes.get(currentidx)});
         player.loadVideoById({'videoId':playlist.getVideo(currentidx), 'starttime':playlist.getStart(currentidx)});
     }
 }
@@ -374,7 +352,7 @@ function  play(idx){
     state=0;
     if(currentidx>-1){    
         let table = document.getElementById("player-functions-table"+currentidx);
-        table.classList.remove("listbox-playing");
+        if(table.classList.contains("listbox-playing"))        table.classList.remove("listbox-playing");
         table.classList.add("listbox-applied"); 
     }
 
