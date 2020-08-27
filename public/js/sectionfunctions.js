@@ -1,16 +1,11 @@
 /*
     TODO
     1. EndPoint가 StartPoint보다 앞에있으면 오류를 알릴것
-    2. 모바일 환경에서도 자동재생이 되도록 mute=1로 실행후 재생시 mute 끄기
-    3. 재생목록 저장기능 추가 ()
-    4. 작은 화면에서 재생목록 css 변경(추후 추가 수정 예정)
-    5. 재생목록 변경기능 추가
-    6. ios환경에서의 자동재생 기능 설정 (ios환경일 경우 muted=1)
-    7. 적용버튼 누를 때 시작시간 적용없으면 처음부터, 종료시간 적용 없으면 마지막까지 재생되도록하기
-    8. url에 재생목록을 넣어서 입력하면 적용되도록
+    2. 재생목록 저장기능 추가 ()
+    3. 재생목록 변경기능 추가
+    4. url에 재생목록을 넣어서 입력하면 적용되도록
 
     긴급
-    1. 2개의 재생목록에서 재생중인 목록 이전의 재생목록 삭제, 이후 비어있는 목록 추가시 반복재생에 의하여 비어있는 목록을 재생하는 오류 발생 - [0,1]에서 0지우면 [1]이 되고 0을 찾으면 없는걸로 표시됨
 */
 
 //재생목록 크기 조절을 위한 reSize함수
@@ -35,7 +30,7 @@ function reSize(){
 
 //재생시간 밑 동영상 목록을 위한 List구조
 function List(){
-    this.id=[];//i번째 원소의 정보가 있는 index를 가리킴
+    // this.id=[];//i번째 원소의 정보가 있는 index를 가리킴
     this.video =[];
     this.starttimes = [];
     this.endtimes = [];
@@ -44,59 +39,67 @@ function List(){
 List.prototype.getVideo=function(num){ return this.video[num]; }
 List.prototype.getStart=function(num){return this.starttimes[num];}
 List.prototype.getEnd=function(num){return this.endtimes[num];}
-List.prototype.size=function(){ return this.id.size;}   //사용하지 않음
+// List.prototype.size=function(){ return this.id.size;}   //사용하지 않음
 List.prototype.clear=function(){
-    this.id=[];
+    // this.id=[];
     this.video =[];
     this.starttimes = [];
     this.endtimes = [];
     this.length=0;
 }
-//에러: 재생목록이 변화하면서 id와 다른 값을 같게 됨으로부터 생성되는 버그
+//[0,1,2]에서 1을 지우면 2는 1이되야함
+//나머지 배열들에서도 삭제를 통해 위치 조정
 List.prototype.set=function(num,name,start,end){
-    let idx = this.id.indexOf(num); //[0,1]에서 0지우면 [1], 0을 찾으면 없는걸로 표시됨
-    console.log('on set finded idx:'+idx);
-    if(idx<0){
-        this.id[this.length]=num;
-        this.id.sort((a,b)=>a-b);
-        this.length++;
-    }
-     console.log('on set length:'+this.length);
+    // let idx = this.id.indexOf(num); //[0,1]에서 0지우면 [1], 0을 찾으면 없는걸로 표시됨
+    // console.log('on set finded idx:'+idx);
+    // if(idx<0){
+    //     this.id[this.length]=num;
+    //     this.id.sort((a,b)=>a-b);
+    //     this.length++;
+    // }
+
+    if(this.video[num]==null) this.length++;
+
     this.video[num] = name;
     this.starttimes[num] = start;
-    this.endtimes[num] = end;
+    this.endtimes[num] = end; 
 }
 List.prototype.delete=function(num){    //1.삭제시 num 보다 큰 id를 변경 2.div의 num자체를 변화시키지 않도록 하기
-    let idx = this.id.indexOf(num);
-    if(idx>-1){
-        this.id.splice(idx,1);  //id에만 속하지 않는다면 접근할 일이 없고 set이나 push함수로 덮어서 사용할 수 있음
-    }
-        // this.video.splice(num,1);
-        // this.starttimes.splice(num,1);
-        // this.endtimes.splice(num,1);
+    // let idx = this.id.indexOf(num);
+    // if(idx>-1){
+    //     this.id.splice(idx,1);  //id에만 속하지 않는다면 접근할 일이 없고 set이나 push함수로 덮어서 사용할 수 있음
+    //     
+    // }
     this.length--;
+    this.video.splice(num,1);
+    this.starttimes.splice(num,1);
+    this.endtimes.splice(num,1);
     
-    console.log('on delete length:'+length);
-    
+    console.log('on delete length:'+this.length);
 }
 List.prototype.push=function(num,name,start,end){
-    this.id[this.length]=num;
+    // this.id[this.length]=num;
     this.video[num] = name;
     this.starttimes[num]=start;
     this.endtimes[num]=end;
-    this.id.sort(function(a,b){
-        return a-b;
-    });
+    // this.id.sort(function(a,b){
+    //     return a-b;
+    // });
     this.length++;
-    console.log('on push length:'+length);
+    console.log('on push length:'+this.length);
 }
 List.prototype.nextId=function(num){
-    if(num<0) return (this.length>-1)?this.id[0]:-1;
-    let idx = this.id.indexOf(num);
-    return (idx>-1&&idx+1<this.length)?this.id[idx+1]:-1;
+    console.log('on nextId length: '+this.length);
+    if(num<0) return (this.length>-1)?0:-1;
+    for(i=num+1;i<this.length;i++){
+        if(this.video[i]!=null){
+            return i;
+        } 
+    }
+    return -1;
 }
 List.prototype.firstId=function(){
-    return (this.length>-1)?this.id[0]:-1;
+    return (this.length>-1)?0:-1;
 }
 
 let tag = document.createElement('script');
@@ -118,7 +121,10 @@ var state;  //0 - 로드하고 재생 전, 1 - 재생 중, 2 - 완료
 
 function onYouTubeIframeAPIReady(){
     //기본 재생 동영상 ID mFzHr8Xyo6E
-    playlist.push(0,"S0RiTTbhVBE",
+    // playlist.push(0,"S0RiTTbhVBE",
+    //     caltime(document.getElementById("playerStartPoint0").value),
+    //     caltime(document.getElementById("playerEndPoint0").value));
+    playlist.set(0,"S0RiTTbhVBE",
         caltime(document.getElementById("playerStartPoint0").value),
         caltime(document.getElementById("playerEndPoint0").value));
     player = new YT.Player('player',{
@@ -179,10 +185,11 @@ function onProgress(currentTime){
 
 function redrawPlayer(){//동영상 재생목록 업데이트
     updateLists();
-    play(0);
+    play(playlist.firstId());
 }
 
-function caltime(str){
+function caltime(str){//str이 비어있다면 디폴트값 설정
+    if(str==null) return -1;
     let colidx = str.indexOf(':');
     if(colidx!=-1){
         let min = str.substring(0,colidx);
@@ -196,8 +203,10 @@ function setPoint(num){
     //1.동영상 변경 -> 동영상 재생
     //2.시작시간 변경 -> 현재시간과 비교하여 변경
     //3.종료시간 변경 -> 종료시간만 변경
+
+    console.log(document.getElementById("playerContent"+num).value);
     let curvideo = playlist.getVideo(currentidx);
-    console.log('setPoint num:'+num);
+
     playlist.set(num,
         getIdFromUrl(document.getElementById("playerContent"+num).value),
         caltime(document.getElementById("playerStartPoint"+num).value),
@@ -213,7 +222,7 @@ function setPoint(num){
     }
 }
 
-function deletePoint(num){  //삭제 시 에러발생 -> 현재 재생중인 경우 다음 재생목록 실행
+function deletePoint(num){  
     // console.log(playlist.size());
     playlist.delete(num);
     if(currentidx==num){
@@ -222,26 +231,26 @@ function deletePoint(num){  //삭제 시 에러발생 -> 현재 재생중인 경
     let dtable = document.getElementById("player-functions-table"+num);
     dtable.parentNode.removeChild(dtable);
     
-    // for(i=num+1;i<=tablenum;i++){
-    //     let table = document.getElementById("player-functions-table"+i);
-    //     let video = document.getElementById("playerContent"+i);
-    //     let start = document.getElementById("playerStartPoint"+i);
-    //     let end = document.getElementById("playerEndPoint"+i);
-    //     let pbutton = document.getElementById("player-button-play"+i);
-    //     let sbutton = document.getElementById("player-button-set"+i);
-    //     let dbutton = document.getElementById("player-button-delete"+i);
-    //     table.id = "player-functions-table"+(i-1);
-    //     video.id = "playerContent"+(i-1);
-    //     start.id = "playerStartPoint"+(i-1);
-    //     end.id = "playerEndPoint"+(i-1);
-    //     pbutton.id="player-button-play"+(i-1);
-    //     pbutton.setAttribute("onClick","play("+(i-1)+")");
-    //     sbutton.id = "player-button-set"+(i-1);
-    //     sbutton.setAttribute("onClick","setPoint("+(i-1)+");");
-    //     dbutton.id="player-button-delete"+(i-1);
-    //     dbutton.setAttribute("onClick","deletePoint("+(i-1)+")");
-    // }
-    // tablenum--;
+    for(i=num+1;i<=tablenum;i++){
+        let table = document.getElementById("player-functions-table"+i);
+        let video = document.getElementById("playerContent"+i);
+        let start = document.getElementById("playerStartPoint"+i);
+        let end = document.getElementById("playerEndPoint"+i);
+        let pbutton = document.getElementById("player-button-play"+i);
+        let sbutton = document.getElementById("player-button-set"+i);
+        let dbutton = document.getElementById("player-button-delete"+i);
+        table.id = "player-functions-table"+(i-1);
+        video.id = "playerContent"+(i-1);
+        start.id = "playerStartPoint"+(i-1);
+        end.id = "playerEndPoint"+(i-1);
+        pbutton.id="player-button-play"+(i-1);
+        pbutton.setAttribute("onClick","play("+(i-1)+")");
+        sbutton.id = "player-button-set"+(i-1);
+        sbutton.setAttribute("onClick","setPoint("+(i-1)+");");
+        dbutton.id="player-button-delete"+(i-1);
+        dbutton.setAttribute("onClick","deletePoint("+(i-1)+")");
+    }
+    tablenum--;
 }
 
 function addTable(){
@@ -292,7 +301,7 @@ function addTable(){
 function updateLists(){
     playlist.clear();
     for(i=0;i<=tablenum;i++){
-        if(document.getElementById("player-functions-table"+i)){
+        if(document.getElementById("playerContent"+i).value){   //동영상 url 또는 id가 존재해야만 입력을 받는다
             console.log(i+"is finded");
             playlist.set(i,
                 getIdFromUrl(document.getElementById("playerContent"+i).value),
@@ -359,7 +368,8 @@ function  play(idx){
     currentidx=idx;
     setPoint(idx);
     loadvideo();
-    starttime = playlist.getStart(idx);
+    //디폴드 시간을 두어 빈칸으로 입력되었을 때 
+    starttime = (playlist.getStart(idx))?playlist.getStart(idx):0;
     endtime = playlist.getEnd(idx);
 
     table = document.getElementById("player-functions-table"+idx);

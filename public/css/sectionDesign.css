@@ -1,6 +1,6 @@
 @media (min-width: 1145px){
     .main{
-    min-height: 90%;
+    min-height: 92%;
     padding:10px 0 0 20px;
     } 
     .youtube{   /*9:16*/
@@ -22,8 +22,8 @@
         margin-left: 5px;
     }
     footer{
-        padding:30px 0 0 0;
-        height: 80px;
+        padding:20px 0 0 0;
+        height: 65px;
     }
 }
 @media (max-width: 1144px){
@@ -32,7 +32,7 @@
     }
 
     .main{
-        min-height: 90%;
+        min-height: 92%;
         padding:5px 5px 5px 5px;
     } 
     .youtube{   
@@ -75,8 +75,8 @@
     }
     footer{
         margin-top: 10px;
-        padding:25px 0 0 0;
-        height:70px;
+        padding:15px 0 0 0;
+        height:60px;
     }
 }
 body{
