@@ -75,7 +75,7 @@ List.prototype.delete=function(num){    //1.삭제시 num 보다 큰 id를 변�
     this.starttimes.splice(num,1);
     this.endtimes.splice(num,1);
     
-    console.log('on delete length:'+this.length);
+    //console.log('on delete length:'+this.length);
 }
 List.prototype.push=function(num,name,start,end){
     // this.id[this.length]=num;
@@ -86,10 +86,10 @@ List.prototype.push=function(num,name,start,end){
     //     return a-b;
     // });
     this.length++;
-    console.log('on push length:'+this.length);
+    //console.log('on push length:'+this.length);
 }
 List.prototype.nextId=function(num){
-    console.log('on nextId length: '+this.length);
+    //console.log('on nextId length: '+this.length);
     if(num<0) return (this.length>-1)?0:-1;
     for(i=num+1;i<this.length;i++){
         if(this.video[i]!=null){
@@ -170,14 +170,13 @@ function onProgress(currentTime){
         }
     }else if(currentTime>endtime){
         state=2;  
-        console.log('currentidx is '+currentidx );
         let nextid = playlist.nextId(currentidx);
         if(nextid<0){
             let repeatbox = document.getElementById("player-button-repeat");
-            if(repeatbox.checked&&playlist.firstId>-1)    play(playlist.firstId());   //0번이 아니라 가장 앞에있는 id[0]
+            if(repeatbox.checked&&playlist.firstId()>-1)    play(playlist.firstId());   //0번이 아니라 가장 앞에있는 id[0]
             else   player.stopVideo();
         }else{
-            console.log('nextid: '+nextid);
+            //console.log('nextid: '+nextid);
             play(nextid);
         }
     }
@@ -204,7 +203,7 @@ function setPoint(num){
     //2.시작시간 변경 -> 현재시간과 비교하여 변경
     //3.종료시간 변경 -> 종료시간만 변경
 
-    console.log(document.getElementById("playerContent"+num).value);
+    //console.log(document.getElementById("playerContent"+num).value);
     let curvideo = playlist.getVideo(currentidx);
 
     playlist.set(num,
@@ -302,7 +301,7 @@ function updateLists(){
     playlist.clear();
     for(i=0;i<=tablenum;i++){
         if(document.getElementById("playerContent"+i).value){   //동영상 url 또는 id가 존재해야만 입력을 받는다
-            console.log(i+"is finded");
+            //console.log(i+"is finded");
             playlist.set(i,
                 getIdFromUrl(document.getElementById("playerContent"+i).value),
                 caltime(document.getElementById("playerStartPoint"+i).value),
@@ -344,7 +343,7 @@ function getIdFromUrl(str){
 
 function loadvideo(){
     var url = player.getVideoUrl();
-    console.log(url);
+    //console.log(url);
     var andpos=url.indexOf('v=');
     var id;
     if(andpos != -1){
