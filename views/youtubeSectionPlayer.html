@@ -16,8 +16,10 @@
             <div class="player-options" id="options">
                 <div id="update-player-button">
                     <button id="player-button-redraw" type="button" class="button-playerlist"
-                        onclick="redrawPlayer();">재생목록 재생하기</button>
+                        onclick="redrawPlayer();">재생목록 재생</button>
                     <button id="player-button-video" type="button" class="button-playerlist" onclick="addTable();">재생목록 추가</button>
+                    <button id="player-button-screenmode" type="button" class="button-playerlist" onclick="screenMode()" aria-label="영화관 모드" title="영화관 모드" >영화관 모드</button>
+                    <button id="player-button-defaultmode" type="button" class="button-playerlist" onclick="defaultMode()" aria-label="기본 보기" title="기본 보기" style="display: none;">기본모드</button>
                     <input type="checkbox" id="player-button-repeat" name="repeat">
                         <label class="button-playerlist" for="repeat">반복</label>
                 </div>

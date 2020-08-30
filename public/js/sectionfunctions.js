@@ -1,9 +1,10 @@
 /*
     TODO
     1. EndPoint가 StartPoint보다 앞에있으면 오류를 알릴것
-    2. 재생목록 저장기능 추가 ()
+    2. 재생목록 저장기능 + 공유기능
     3. 재생목록 변경기능 추가
     4. url에 재생목록을 넣어서 입력하면 적용되도록
+    5. 영화관모드 추가
 
     긴급
 */
@@ -379,3 +380,15 @@ function  play(idx){
     player.seekTo(starttime);
 }
 
+function screenMode(){
+    document.getElementsByClassName("youtube")[0].classList.add("player-screen");
+    document.getElementById("options").classList.add("player-options-screen");
+    document.getElementById("player-button-screenmode").style="display:none";
+    document.getElementById("player-button-defaultmode").style="display:inline-block";
+}
+function defaultMode(){
+    document.getElementsByClassName("youtube")[0].classList.remove("player-screen");
+    document.getElementById("options").classList.remove("player-options-screen");
+    document.getElementById("player-button-screenmode").style="display: inline-block";
+    document.getElementById("player-button-defaultmode").style="display:none";
+}
